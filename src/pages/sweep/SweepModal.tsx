@@ -6,6 +6,7 @@ import {
   Shield, FileText, MessageSquare, Zap, Mic, Volume2
 } from 'lucide-react';
 import type { ClaimCheckEntry } from '../../data/types';
+import { PATIENTS } from '../../data/seed';
 import { playDialTone, playRingTone, playDTMF, playConnectChime, playHangupTone, playKeyClick, playSuccessChime, playHoldBeep, playAlertBeep, speakText, stopSpeech } from '../../lib/sounds';
 
 const DTMF_KEYS = '0123456789*#';
@@ -24,27 +25,17 @@ const TPA_ACCESS: Record<string, { method: 'hotline' | 'portal' | 'api' | 'app';
 type DialogueLine = { speaker: 'agent' | 'operator' | 'system'; text: string; durationMs: number };
 
 function getCallDialogue(claim: ClaimCheckEntry, response: string): DialogueLine[] {
+  const patient = PATIENTS.find((p) => p.fullName === claim.patientName);
+  const ic = patient?.icNumber ?? '951108-10-1123';
+
   return [
-    { speaker: 'system', text: 'Connecting to IVR system...', durationMs: 1500 },
-    { speaker: 'system', text: 'Welcome to MiCare. For Bahasa Melayu, tekan 1. For English, press 2.', durationMs: 2000 },
-    { speaker: 'agent', text: 'Pressing 2 for English...', durationMs: 1000 },
-    { speaker: 'system', text: 'For Claims Status, press 1. For New Claims, press 2. For Panel Registration, press 3.', durationMs: 2500 },
-    { speaker: 'agent', text: 'Pressing 1 for Claims Status...', durationMs: 1000 },
-    { speaker: 'system', text: 'Please enter your provider registration number followed by hash.', durationMs: 1800 },
-    { speaker: 'agent', text: 'Entering: PMK-1234-WP #', durationMs: 1200 },
-    { speaker: 'system', text: 'Please hold while we connect you to a claims officer. Your estimated wait time is 2 minutes.', durationMs: 2500 },
-    { speaker: 'system', text: '\u266B Hold music playing... (0:42)', durationMs: 2000 },
-    { speaker: 'operator', text: 'Hello, MiCare claims department, this is Sarah speaking. How can I help you?', durationMs: 2500 },
-    { speaker: 'agent', text: `Hi Sarah, I\u2019m calling from Klinik Dr Vani, registration PMK-1234-WP. I\u2019m checking the status of claim ${claim.claimNo} for patient IC ending ****${claim.patientName.slice(-3)}.`, durationMs: 3000 },
-    { speaker: 'operator', text: 'Let me pull that up... one moment please.', durationMs: 2000 },
-    { speaker: 'system', text: '\u266B Brief hold (0:15)', durationMs: 1500 },
-    { speaker: 'operator', text: `Yes, I can see claim ${claim.claimNo}. ${response}`, durationMs: 3000 },
-    { speaker: 'agent', text: 'Thank you Sarah. Can you confirm the expected payment date?', durationMs: 2000 },
-    { speaker: 'operator', text: 'Yes, it should be processed in the next batch cycle. You should see it within 7 working days.', durationMs: 2500 },
-    { speaker: 'agent', text: 'Perfect, I\u2019ll note that down. Thank you for your help.', durationMs: 1500 },
-    { speaker: 'operator', text: 'You\u2019re welcome. Is there anything else?', durationMs: 1500 },
-    { speaker: 'agent', text: 'That\u2019s all for this claim. Thank you, bye.', durationMs: 1200 },
-    { speaker: 'system', text: 'Call ended. Duration: 3:42', durationMs: 1000 },
+    { speaker: 'system', text: 'Connecting to TPA hotline...', durationMs: 1500 },
+    { speaker: 'operator', text: 'Hello, MiCare customer service. How can I help you today?', durationMs: 2500 },
+    { speaker: 'agent', text: `Hi, this is ClinicMate calling from Klinik Dr. Vani. We would like to verify if the insurance coverage is valid for patient ${claim.patientName}, with I C number ${ic}.`, durationMs: 3000 },
+    { speaker: 'operator', text: `Let me check the database... Yes, I can confirm that ${claim.patientName} has active coverage. ${response}`, durationMs: 3000 },
+    { speaker: 'agent', text: 'Perfect, thank you so much for the confirmation.', durationMs: 1500 },
+    { speaker: 'operator', text: "You're welcome. Have a great day. Goodbye.", durationMs: 1500 },
+    { speaker: 'system', text: 'Call ended.', durationMs: 1000 },
   ];
 }
 

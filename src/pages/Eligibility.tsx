@@ -1,5 +1,5 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { Search, CheckCircle, XCircle, Loader2, Shield, User } from 'lucide-react';
 import { getEligibilityResults, PATIENTS, type EligibilityCheckResult } from '../data/seed';
 import { formatRM } from '../lib/utils';

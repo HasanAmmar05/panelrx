@@ -1,13 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
-  X, Phone, Monitor, Globe, Smartphone, CheckCircle, Clock, AlertTriangle,
-  CalendarClock, RotateCcw, XCircle, Loader2, Bot, ArrowRight,
+  X, Phone, Monitor, Globe, Smartphone, CheckCircle, Loader2, Bot, ArrowRight,
   Shield, FileText, MessageSquare, Zap, Mic, Volume2
 } from 'lucide-react';
 import type { ClaimCheckEntry } from '../../data/types';
 import { PATIENTS } from '../../data/seed';
-import { playDialTone, playRingTone, playDTMF, playConnectChime, playHangupTone, playKeyClick, playSuccessChime, playHoldBeep, playAlertBeep, speakText, stopSpeech } from '../../lib/sounds';
+import { playDialTone, playRingTone, playDTMF, playConnectChime, playHangupTone, playKeyClick, playSuccessChime, playHoldBeep, speakText, stopSpeech } from '../../lib/sounds';
 
 const DTMF_KEYS = '0123456789*#';
 
@@ -420,7 +419,6 @@ export function SweepModal({ claims, responses, onComplete, onClose }: SweepModa
                 <VoiceCallView
                   tpa={currentClaim.tpaName}
                   url={TPA_ACCESS[currentClaim.tpaName]?.url ?? ''}
-                  claim={currentClaim}
                   dialogue={visibleDialogue}
                   callRef={callRef}
                 />
@@ -498,8 +496,8 @@ function KV({ label, value, vc = 'text-[#94A3B8]' }: { label: string; value: str
 }
 
 // ─── Voice Call View (with dialogue bubbles + waveform) ───
-function VoiceCallView({ tpa, url, claim, dialogue, callRef }: {
-  tpa: string; url: string; claim: ClaimCheckEntry; dialogue: DialogueLine[];
+function VoiceCallView({ tpa, url, dialogue, callRef }: {
+  tpa: string; url: string; dialogue: DialogueLine[];
   callRef: React.RefObject<HTMLDivElement | null>;
 }) {
   const lastLine = dialogue[dialogue.length - 1];

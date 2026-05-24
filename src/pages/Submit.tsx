@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, CheckCircle, Loader2, Plus, Trash2, AlertTriangle, Shield, Bot, Globe, Phone, Monitor, Smartphone, FileCheck, Clock, FileUp, User, X } from 'lucide-react';
+import { Send, CheckCircle, Loader2, Plus, Trash2, AlertTriangle, Shield, Bot, Globe, Phone, Monitor, Smartphone, FileCheck, Clock, FileUp, X } from 'lucide-react';
 import { PATIENTS } from '../data/seed';
-import { PAYERS } from '../data/payers';
 
 /** Malaysian IC: last digit odd = male, even = female */
 function genderFromIc(ic: string): 'Male' | 'Female' | null {
@@ -347,6 +346,39 @@ export function Submit() {
                     <p className="text-[10px] text-positive font-mono mt-1">\u2713 AI auto-extracted claim data from uploaded documents</p>
                   </div>
                 )}
+              </div>
+
+              {/* Text Paste and Extract */}
+              <div className="pt-4 border-t border-border/60 space-y-2">
+                <label className="font-mono text-xs text-muted uppercase tracking-wide block mb-1">Or paste consultation notes directly</label>
+                <textarea
+                  value={pasteNotes}
+                  onChange={(e) => setPasteNotes(e.target.value)}
+                  placeholder="Example: Patient Faizal Rahman (920101-10-1233). Diagnosis is acute upper respiratory infection J06.9. Prescribed Amoxicillin and Paracetamol."
+                  className="w-full h-24 px-3 py-2 text-sm rounded-md bg-background border border-border text-ink font-mono focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary-ring transition-colors resize-none"
+                />
+                <div className="flex items-center justify-between">
+                  <button
+                    onClick={handlePasteExtract}
+                    disabled={extracting || !pasteNotes.trim()}
+                    className="bg-primary/10 text-primary hover:bg-primary/20 disabled:opacity-40 px-4 py-2 rounded text-xs font-semibold transition-colors flex items-center gap-1.5"
+                    type="button"
+                  >
+                    {extracting ? (
+                      <>
+                        <Loader2 size={12} className="animate-spin" />
+                        Extracting...
+                      </>
+                    ) : (
+                      'Extract Claim Data'
+                    )}
+                  </button>
+                  {extractionLog.length > 0 && (
+                    <span className="font-mono text-[10px] text-muted">
+                      {extractionLog[extractionLog.length - 1]}
+                    </span>
+                  )}
+                </div>
               </div>
 
               <button onClick={submitClaim} className="bg-primary text-white hover:bg-primary-deep px-6 py-3 rounded-md font-medium transition-colors flex items-center gap-2" type="button">

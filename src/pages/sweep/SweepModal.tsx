@@ -6,7 +6,7 @@ import {
   Shield, FileText, MessageSquare, Zap, Mic, Volume2
 } from 'lucide-react';
 import type { ClaimCheckEntry } from '../../data/types';
-import { playDialTone, playRingTone, playDTMF, playConnectChime, playHangupTone, playKeyClick, playSuccessChime, playHoldBeep, playAlertBeep } from '../../lib/sounds';
+import { playDialTone, playRingTone, playDTMF, playConnectChime, playHangupTone, playKeyClick, playSuccessChime, playHoldBeep, playAlertBeep, speakText, stopSpeech } from '../../lib/sounds';
 
 const DTMF_KEYS = '0123456789*#';
 
@@ -176,16 +176,25 @@ export function SweepModal({ claims, responses, onComplete, onClose }: SweepModa
     if (callRef.current) callRef.current.scrollTop = callRef.current.scrollHeight;
   }, [visibleDialogue]);
 
+  // Cleanup speech synthesis on unmount
+  useEffect(() => {
+    return () => {
+      stopSpeech();
+    };
+  }, []);
+
   // Voice call runner
   useEffect(() => {
     if (!isInVoiceCall || callDialogue.length === 0) return;
     let idx = 0;
+    let activeTimer: ReturnType<typeof setTimeout> | null = null;
+
     const showNext = () => {
       if (idx >= callDialogue.length) {
         // Call ended sound
         playHangupTone();
         // Wait 3 seconds to keep the call screen visible before proceeding
-        setTimeout(() => {
+        activeTimer = setTimeout(() => {
           // Call done — add response step to log
           const respText = resp?.response ?? 'No update.';
           setVisibleSteps((prev) => [...prev, { agent: 'StatusAgent', action: `TPA responded: ${(resp?.outcome ?? 'pending').toUpperCase()}`, detail: respText, type: 'response', done: true, durationMs: 0 }]);
@@ -204,24 +213,21 @@ export function SweepModal({ claims, responses, onComplete, onClose }: SweepModa
       if (line.speaker === 'system') {
         if (line.text.includes('Connecting')) {
           playDialTone(1200);
-          setTimeout(playRingTone, 1300);
+          activeTimer = setTimeout(playRingTone, 1300);
         } else if (line.text.includes('Welcome to')) {
           playConnectChime();
         } else if (line.text.includes('Hold music') || line.text.includes('hold')) {
           playHoldBeep();
-        } else if (line.text.includes('Call ended')) {
-          // hangup handled above
         } else if (line.text.includes('press') || line.text.includes('Press')) {
-          // IVR menu beep
           playHoldBeep();
         }
       } else if (line.speaker === 'agent') {
         if (line.text.includes('Pressing 1')) {
-          setTimeout(() => playDTMF('1', 200), 300);
+          activeTimer = setTimeout(() => playDTMF('1', 200), 300);
         } else if (line.text.includes('Pressing 2')) {
-          setTimeout(() => playDTMF('2', 200), 300);
+          activeTimer = setTimeout(() => playDTMF('2', 200), 300);
         } else if (line.text.includes('Pressing 3')) {
-          setTimeout(() => playDTMF('3', 200), 300);
+          activeTimer = setTimeout(() => playDTMF('3', 200), 300);
         } else if (line.text.includes('Entering:')) {
           // Type out provider number with key clicks
           const chars = 'PMK-1234-WP#';
@@ -232,7 +238,6 @@ export function SweepModal({ claims, responses, onComplete, onClose }: SweepModa
             }, 60 * ci + 200);
           });
         } else {
-          // Agent speaking — subtle key click
           playKeyClick();
         }
       } else if (line.speaker === 'operator') {
@@ -241,11 +246,36 @@ export function SweepModal({ claims, responses, onComplete, onClose }: SweepModa
         }
       }
 
-      const timer = setTimeout(() => { idx++; showNext(); }, line.durationMs);
-      return () => clearTimeout(timer);
+      // Action to perform when line finishes (advance to next speaker)
+      const onLineEnd = () => {
+        idx++;
+        // Add a natural 400ms pause between conversational turns
+        activeTimer = setTimeout(showNext, 400);
+      };
+
+      // Determine if this is an ambient system state or actual speech
+      const isAmbientSystem = line.speaker === 'system' && (
+        line.text.includes('Connecting') ||
+        line.text.includes('Hold music') ||
+        line.text.includes('hold') ||
+        line.text.includes('ended')
+      );
+
+      if (isAmbientSystem) {
+        activeTimer = setTimeout(onLineEnd, line.durationMs);
+      } else {
+        // Real conversational voice via Browser Text-To-Speech Synthesis
+        speakText(line.text, line.speaker, onLineEnd);
+      }
     };
-    const t = setTimeout(showNext, 500);
-    return () => clearTimeout(t);
+
+    const startTimer = setTimeout(showNext, 500);
+
+    return () => {
+      clearTimeout(startTimer);
+      if (activeTimer) clearTimeout(activeTimer);
+      stopSpeech();
+    };
   }, [isInVoiceCall, callDialogue]);
 
   // Step engine

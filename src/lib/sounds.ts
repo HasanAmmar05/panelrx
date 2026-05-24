@@ -114,3 +114,90 @@ export function playAlertBeep() {
   playTone(880, 100, 0.1);
   setTimeout(() => playTone(880, 100, 0.1), 200);
 }
+
+/** Stop any ongoing speech synthesis */
+export function stopSpeech() {
+  if (typeof window !== 'undefined' && window.speechSynthesis) {
+    window.speechSynthesis.cancel();
+  }
+}
+
+/** Speak text using SpeechSynthesis with customizable voices and callbacks */
+export function speakText(
+  text: string,
+  speaker: 'agent' | 'operator' | 'system',
+  onEnd?: () => void
+): SpeechSynthesisUtterance | null {
+  if (typeof window === 'undefined' || !window.speechSynthesis) {
+    if (onEnd) setTimeout(onEnd, 1500); // fallback
+    return null;
+  }
+
+  // Cancel any currently speaking utterance
+  window.speechSynthesis.cancel();
+
+  // Filter out hold music or connection markers
+  if (text.includes('♫') || text.includes('hold') && text.includes('music')) {
+    if (onEnd) setTimeout(onEnd, 2000);
+    return null;
+  }
+
+  const cleanText = text.replace(/[\u266B]/g, '').trim();
+  if (!cleanText) {
+    if (onEnd) onEnd();
+    return null;
+  }
+
+  const utterance = new SpeechSynthesisUtterance(cleanText);
+
+  // Set safety backup timeout in case SpeechSynthesis gets stuck
+  let isDone = false;
+  const safetyTimeout = setTimeout(() => {
+    if (!isDone) {
+      isDone = true;
+      if (onEnd) onEnd();
+    }
+  }, (cleanText.length * 120) + 3000);
+
+  // Set event handlers
+  utterance.onend = () => {
+    clearTimeout(safetyTimeout);
+    if (!isDone) {
+      isDone = true;
+      if (onEnd) onEnd();
+    }
+  };
+
+  utterance.onerror = () => {
+    clearTimeout(safetyTimeout);
+    if (!isDone) {
+      isDone = true;
+      if (onEnd) onEnd();
+    }
+  };
+
+  // Get available voices
+  const voices = window.speechSynthesis.getVoices();
+
+  // Try to find natural-sounding english voices
+  if (speaker === 'agent') {
+    const voice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('David') || v.name.includes('Zira') || v.name.includes('Natural') || v.name.includes('Microsoft') || v.name.includes('Google'))) || voices[0];
+    if (voice) utterance.voice = voice;
+    utterance.pitch = 1.0;
+    utterance.rate = 1.05; // Slightly faster professional speed
+  } else if (speaker === 'operator') {
+    const voice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Hazel') || v.name.includes('Zira') || v.name.includes('Female') || v.name.includes('Google'))) || voices[0];
+    if (voice) utterance.voice = voice;
+    utterance.pitch = 1.1; // Higher friendly pitch
+    utterance.rate = 0.95; // Distinct conversational speed
+  } else {
+    const voice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Robotic') || v.name.includes('Microsoft') || v.name.includes('Google') || v.name.includes('System'))) || voices[0];
+    if (voice) utterance.voice = voice;
+    utterance.pitch = 0.9;
+    utterance.rate = 0.95;
+  }
+
+  // Speak
+  window.speechSynthesis.speak(utterance);
+  return utterance;
+}

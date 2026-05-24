@@ -56,7 +56,7 @@ const ICON_MAP = {
 export function Submit() {
   const [state, setState] = useState<SubmitState>('form');
   const [ic, setIc] = useState('920101-10-1233');
-  const [uploadedFiles, setUploadedFiles] = useState<{ name: string; size: string; type: string }[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<{ name: string; size: string; type: string; content?: string }[]>([]);
   const [serviceDate, setServiceDate] = useState('2026-05-24');
   const [diagnosis, setDiagnosis] = useState('J06.9 \u2014 Acute URTI, unspecified');
   const [lineItems, setLineItems] = useState<LineItem[]>([
@@ -67,33 +67,150 @@ export function Submit() {
   const [pipeline, setPipeline] = useState<PipelineStep[]>([]);
   const [currentStep, setCurrentStep] = useState(-1);
   const logRef = useRef<HTMLDivElement>(null);
+  const [pasteNotes, setPasteNotes] = useState('');
+  const [extracting, setExtracting] = useState(false);
+  const [extractionLog, setExtractionLog] = useState<string[]>([]);
 
   const total = lineItems.reduce((s, li) => s + li.qty * li.unitPrice, 0);
   const patient = PATIENTS.find((p) => p.icNumber === ic);
   const gender = genderFromIc(ic);
 
+  /** Parse clinical text and extract structured claim data */
+  function extractFromText(text: string, source: string) {
+    setExtracting(true);
+    setExtractionLog([]);
+
+    const logs: string[] = [];
+    const steps = [
+      { msg: `📄 Reading ${source}...`, delay: 300 },
+      { msg: `🔍 Scanning for IC number...`, delay: 600 },
+      { msg: `🏥 Identifying diagnosis codes...`, delay: 400 },
+      { msg: `💊 Extracting medications & line items...`, delay: 500 },
+      { msg: `💰 Calculating amounts...`, delay: 300 },
+      { msg: `✅ Extraction complete — form auto-filled`, delay: 400 },
+    ];
+
+    let i = 0;
+    function nextStep() {
+      if (i >= steps.length) {
+        // Actually extract data
+        applyExtractedData(text);
+        setExtracting(false);
+        return;
+      }
+      logs.push(steps[i].msg);
+      setExtractionLog([...logs]);
+      const delay = steps[i].delay;
+      i++;
+      setTimeout(nextStep, delay);
+    }
+    nextStep();
+  }
+
+  function applyExtractedData(text: string) {
+    const lower = text.toLowerCase();
+
+    // Try to find IC number
+    const icMatch = text.match(/\d{6}-\d{2}-\d{4}/);
+    if (icMatch) setIc(icMatch[0]);
+
+    // Try to find ICD-10 code
+    const icdMatch = text.match(/[A-Z]\d{2}\.?\d/);
+    if (icdMatch) {
+      const code = icdMatch[0];
+      const icdNames: Record<string, string> = {
+        'J06.9': 'Acute URTI, unspecified',
+        'J02.9': 'Acute pharyngitis, unspecified',
+        'J03.9': 'Acute tonsillitis, unspecified',
+        'J18.9': 'Pneumonia, unspecified',
+        'K29.7': 'Gastritis, unspecified',
+        'R50.9': 'Fever, unspecified',
+        'N39.0': 'Urinary tract infection',
+        'L30.9': 'Dermatitis, unspecified',
+        'M54.5': 'Low back pain',
+      };
+      setDiagnosis(`${code} \u2014 ${icdNames[code] ?? 'Clinical diagnosis'}`);
+    }
+
+    // Extract medications and items
+    const items: LineItem[] = [];
+    let nextId = Date.now();
+
+    // Always include consultation
+    if (lower.includes('consult') || lower.includes('visit') || lower.includes('examination') || !icdMatch) {
+      items.push({ id: nextId++, description: 'Consultation fee', qty: 1, unitPrice: 35 });
+    }
+
+    // Common drug patterns
+    const drugPatterns: [RegExp, string, number][] = [
+      [/amoxicillin|amox/i, 'Amoxicillin 500mg (15 caps)', 18],
+      [/paracetamol|pcm|acetaminophen/i, 'Paracetamol 500mg (20 tabs)', 5],
+      [/ibuprofen/i, 'Ibuprofen 400mg (10 tabs)', 8],
+      [/cetirizine|antihistamine/i, 'Cetirizine 10mg (10 tabs)', 6],
+      [/azithromycin/i, 'Azithromycin 250mg (6 tabs)', 22],
+      [/omeprazole|antacid/i, 'Omeprazole 20mg (14 caps)', 12],
+      [/metformin/i, 'Metformin 500mg (60 tabs)', 15],
+      [/amlodipine/i, 'Amlodipine 5mg (30 tabs)', 18],
+      [/cough.*syrup|dextromethorphan/i, 'Cough syrup 120ml', 8],
+      [/throat.*lozenge|strepsil/i, 'Throat lozenges (12 pcs)', 6],
+      [/mc|medical cert/i, 'Medical certificate', 0],
+      [/blood.*test|fbc|cbc/i, 'Blood test (FBC)', 30],
+      [/urine.*test/i, 'Urine FEME', 15],
+      [/x-?ray/i, 'X-ray (chest PA)', 45],
+      [/throat.*swab|rapid.*test|antigen/i, 'Throat swab (rapid antigen)', 25],
+      [/nebuli[sz]/i, 'Nebulization', 20],
+      [/injection|im|iv/i, 'IM injection', 15],
+      [/dressing|wound/i, 'Wound dressing', 12],
+    ];
+
+    for (const [pattern, desc, price] of drugPatterns) {
+      if (pattern.test(text)) {
+        items.push({ id: nextId++, description: desc, qty: 1, unitPrice: price });
+      }
+    }
+
+    // If nothing specific found, use generic items based on diagnosis
+    if (items.length <= 1) {
+      items.push({ id: nextId++, description: 'Medication (as prescribed)', qty: 1, unitPrice: 15 });
+    }
+
+    setLineItems(items);
+  }
+
   function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files;
     if (!files) return;
-    const newFiles = Array.from(files).map((f) => ({
-      name: f.name,
-      size: f.size > 1024 * 1024 ? `${(f.size / (1024 * 1024)).toFixed(1)} MB` : `${Math.round(f.size / 1024)} KB`,
-      type: f.type || 'application/octet-stream',
-    }));
-    setUploadedFiles((prev) => [...prev, ...newFiles]);
-    // Simulate AI extraction from uploaded document
-    if (newFiles.some((f) => f.name.toLowerCase().includes('.pdf') || f.type.includes('pdf') || f.type.includes('text'))) {
-      // Auto-fill from uploaded document (simulated)
-      setTimeout(() => {
-        setDiagnosis('J02.9 \u2014 Acute pharyngitis');
-        setLineItems([
-          { id: 1, description: 'Consultation fee', qty: 1, unitPrice: 35 },
-          { id: 2, description: 'Amoxicillin 500mg (15 caps)', qty: 1, unitPrice: 18 },
-          { id: 3, description: 'Paracetamol 500mg (20 tabs)', qty: 1, unitPrice: 5 },
-          { id: 4, description: 'Throat swab (rapid antigen)', qty: 1, unitPrice: 25 },
-        ]);
-      }, 800);
-    }
+
+    Array.from(files).forEach((file) => {
+      const meta = {
+        name: file.name,
+        size: file.size > 1024 * 1024 ? `${(file.size / (1024 * 1024)).toFixed(1)} MB` : `${Math.round(file.size / 1024)} KB`,
+        type: file.type || 'application/octet-stream',
+      };
+
+      // Read text files
+      if (file.type.includes('text') || file.name.endsWith('.txt') || file.name.endsWith('.csv')) {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const content = ev.target?.result as string;
+          setUploadedFiles((prev) => [...prev, { ...meta, content }]);
+          extractFromText(content, file.name);
+        };
+        reader.readAsText(file);
+      } else {
+        // For PDF/images, simulate extraction (real system would use OCR)
+        setUploadedFiles((prev) => [...prev, meta]);
+        extractFromText(
+          `Consultation note for patient IC 920101-10-1233. Diagnosis: J06.9 URTI. Prescribed: Amoxicillin 500mg, Paracetamol 500mg. Consultation fee RM 35.`,
+          file.name
+        );
+      }
+    });
+  }
+
+  function handlePasteExtract() {
+    if (!pasteNotes.trim()) return;
+    extractFromText(pasteNotes, 'pasted notes');
   }
 
   // Auto-scroll pipeline

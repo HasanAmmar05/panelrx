@@ -1,0 +1,13 @@
+Name: Siti Nurhaliza
+IC: 880505-10-5555
+Clinic: Tanglin Medical Center (Inpatient Wing)
+Date: 2014-03-10
+Total: 1650.00
+
+Age/Sex: 38/F.
+
+Chief Complaint: High grade fever, severe muscle aches, and pain behind the eyes for the past 5 days. 
+
+Laboratory Evaluation: Stat FBC indicates profound hemoconcentration (Hematocrit > 55%, elevated Hb). Platelets have plummeted to 15,000/uL, indicating critical thrombocytopenia. Lymphocyte count is markedly raised. Dengue NS1 rapid test returned a POSITIVE result.
+
+Assessment & Plan: Acute Dengue Hemorrhagic Fever. Patient requires immediate transfer to the isolation ward for close monitoring. Initiating aggressive intravenous rehydration (0.9% NaCl) and preparing for emergency platelet transfusion due to imminent bleeding risks.

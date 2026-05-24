@@ -29,13 +29,13 @@ export function Stage9CTA({ elapsedMs }: Stage9CTAProps) {
             className="bg-surface-elevated border border-border rounded-lg p-10 max-w-2xl w-full text-center"
           >
             <p className="font-mono text-xs text-primary uppercase tracking-widest">
-              PANELRX
+              ClinicMate
             </p>
             <h2 className="font-display text-3xl md:text-4xl text-ink mt-4">
               Pilot Monday. Free for the first 50 PJ clinics.
             </h2>
             <p className="text-body text-base max-w-xl mx-auto mt-4">
-              PanelRx is an autonomous AI operations layer between Malaysian GP
+              ClinicMate is an autonomous AI operations layer between Malaysian GP
               clinics and TPAs. Built in 4 hours at Lovable Vibeathon KL · May
               24, 2026.
             </p>

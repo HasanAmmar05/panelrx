@@ -69,7 +69,7 @@ function generateSteps(claim: ClaimCheckEntry, outcome: string, response: string
     steps.push({ agent: 'StatusAgent', action: `Initiating voice call to ${access.url}`, detail: 'TTS engine active \u2022 Voice: en-MY-Yasmin \u2022 Starting IVR navigation...', type: 'voice_call', durationMs: 35000 }); // voice call runs its own timeline
   } else if (method === 'portal') {
     steps.push({ agent: 'StatusAgent', action: `Opening ${access.url}`, detail: 'Loading portal... Chromium headless instance started', type: 'connect', durationMs: 1800 });
-    steps.push({ agent: 'StatusAgent', action: 'Authenticating with portal', detail: 'Credentials: panelrx_vani@*** \u2022 2FA token: auto-generated \u2022 CAPTCHA: bypassed via API key', type: 'navigate', durationMs: 1500 });
+    steps.push({ agent: 'StatusAgent', action: 'Authenticating with portal', detail: 'Credentials: ClinicMate_vani@*** \u2022 2FA token: auto-generated \u2022 CAPTCHA: bypassed via API key', type: 'navigate', durationMs: 1500 });
     steps.push({ agent: 'StatusAgent', action: 'Navigating to Claims Status', detail: 'Dashboard \u2192 Claims Management \u2192 Status Lookup \u2022 Page loaded in 1.2s', type: 'navigate', durationMs: 1200 });
     steps.push({ agent: 'StatusAgent', action: 'Entering search criteria', detail: `Claim ref: ${claim.claimNo} \u2022 Patient IC: ****${claim.patientName.slice(-3)} \u2022 Clicking search...`, type: 'input', durationMs: 1500 });
     steps.push({ agent: 'StatusAgent', action: 'Waiting for portal response', detail: 'Query submitted to TPA database... loading results page', type: 'waiting', durationMs: 2500 });
@@ -468,7 +468,7 @@ function VoiceCallView({ tpa, url, claim, dialogue, callRef }: {
         {isSpeaking && (
           <div className="flex items-center justify-center gap-2 mt-1.5">
             {lastLine?.speaker === 'agent' ? (
-              <span className="flex items-center gap-1 text-[9px] font-mono text-teal-400"><Mic size={10} /> PanelRx Agent speaking</span>
+              <span className="flex items-center gap-1 text-[9px] font-mono text-teal-400"><Mic size={10} /> ClinicMate Agent speaking</span>
             ) : (
               <span className="flex items-center gap-1 text-[9px] font-mono text-emerald-400"><Volume2 size={10} /> {tpa} operator speaking</span>
             )}
@@ -498,7 +498,7 @@ function VoiceCallView({ tpa, url, claim, dialogue, callRef }: {
                   : 'bg-[#161B22] border border-[#21262D]'
               }`}>
                 <p className={`font-mono text-[8px] mb-0.5 ${line.speaker === 'agent' ? 'text-teal-400' : 'text-emerald-400'}`}>
-                  {line.speaker === 'agent' ? 'PanelRx Agent' : `${tpa} Operator`}
+                  {line.speaker === 'agent' ? 'ClinicMate Agent' : `${tpa} Operator`}
                 </p>
                 <p className="font-mono text-[10px] text-[#C9D1D9] leading-relaxed">{line.text}</p>
               </div>
@@ -541,7 +541,7 @@ function BrowserSim({ tpa, url, claim, hasConnected, hasInput, isWaiting, hasRes
         {!hasConnected && <div className="space-y-2"><div className="h-6 w-32 bg-[#161B22] rounded animate-pulse" /><div className="h-8 w-full bg-[#161B22] rounded animate-pulse" /><div className="h-8 w-full bg-[#161B22] rounded animate-pulse" /></div>}
         {hasConnected && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <div className="flex items-center gap-2 mb-3"><span className="font-mono text-[10px] text-emerald-400">{'\u2713'} Authenticated</span><span className="font-mono text-[9px] text-[#475569]">panelrx_vani@***</span></div>
+            <div className="flex items-center gap-2 mb-3"><span className="font-mono text-[10px] text-emerald-400">{'\u2713'} Authenticated</span><span className="font-mono text-[9px] text-[#475569]">ClinicMate_vani@***</span></div>
             <div className="flex gap-2 mb-3 text-[10px] font-mono"><span className="text-[#475569] px-2 py-1 rounded bg-[#161B22]">Dashboard</span><span className="text-white px-2 py-1 rounded bg-teal-800/50 border border-teal-700/50">Claims</span><span className="text-[#475569] px-2 py-1 rounded bg-[#161B22]">Reports</span></div>
             <div className="bg-[#161B22] rounded border border-[#21262D] p-2 mb-3">
               <p className="font-mono text-[9px] text-[#475569] mb-1">Claim Reference Search</p>

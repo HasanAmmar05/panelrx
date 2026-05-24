@@ -14,7 +14,7 @@ const PAGE_TITLES: Record<string, string> = {
 
 export function TopBar() {
   const location = useLocation();
-  const title = PAGE_TITLES[location.pathname] ?? 'PanelRx';
+  const title = PAGE_TITLES[location.pathname] ?? 'ClinicMate';
 
   return (
     <header

@@ -50,7 +50,7 @@ export function Status() {
         <div>
           <h2 className="font-display text-2xl text-ink">Claim Status Tracker</h2>
           <p className="text-body text-sm mt-1">
-            {activeClaims.length} active claims · PRD 6.3 · FollowUpAgent handles overdue reminders
+            {activeClaims.length} active claims ·  · FollowUpAgent handles overdue reminders
           </p>
         </div>
         <div className="flex items-center gap-2">

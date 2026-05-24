@@ -46,7 +46,7 @@ export async function runAgent<TInput, TOutput>(
     finishInvocation(id, output, false, tokens);
     return { output, invocation: agentTrace.find(id)! };
   } catch (error) {
-    console.warn(`[PanelRx/orchestrator] ${agent.id} failed, using fallback:`, error);
+    console.warn(`[ClinicMate/orchestrator] ${agent.id} failed, using fallback:`, error);
     const output = agent.fallback(input);
     finishInvocation(id, output, true, undefined, String(error));
     return { output, invocation: agentTrace.find(id)! };

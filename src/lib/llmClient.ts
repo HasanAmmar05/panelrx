@@ -15,7 +15,7 @@ export async function callLLM(options: {
   timeoutMs?: number;
 }): Promise<{ text: string; tokens: { input: number; output: number } }> {
   const apiKey = import.meta.env.VITE_DEEPSEEK_API_KEY;
-  if (!apiKey) throw new Error('[PanelRx/llmClient] No VITE_DEEPSEEK_API_KEY found');
+  if (!apiKey) throw new Error('[ClinicMate/llmClient] No VITE_DEEPSEEK_API_KEY found');
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), options.timeoutMs ?? 15000);
@@ -40,7 +40,7 @@ export async function callLLM(options: {
 
     clearTimeout(timeout);
     if (!response.ok) {
-      throw new Error(`[PanelRx/llmClient] HTTP ${response.status}`);
+      throw new Error(`[ClinicMate/llmClient] HTTP ${response.status}`);
     }
     const data = await response.json();
     const text = data.choices?.[0]?.message?.content ?? '';

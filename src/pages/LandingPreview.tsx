@@ -61,7 +61,7 @@ export function LandingPreview() {
             <span className="w-2 h-2 rounded-full bg-amber" />
             <span className="w-2 h-2 rounded-full bg-positive" />
           </div>
-          <span className="font-mono text-[10px] text-muted">panelrx.app/demo</span>
+          <span className="font-mono text-[10px] text-muted">ClinicMate.app/demo</span>
           <span className="flex items-center gap-1 text-[10px] text-danger font-mono">
             <motion.span
               className="w-1.5 h-1.5 rounded-full bg-danger"

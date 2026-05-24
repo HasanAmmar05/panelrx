@@ -51,7 +51,7 @@ export function Stage8MMAReveal({ elapsedMs }: Stage8MMARevealProps) {
             transition={{ duration: 0.4 }}
             className="font-display text-xl md:text-2xl text-amber"
           >
-            If 1,000 solo GPs ran PanelRx...
+            If 1,000 solo GPs ran ClinicMate...
           </motion.p>
 
           {showSecondLine && (

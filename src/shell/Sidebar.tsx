@@ -60,7 +60,7 @@ export function Sidebar() {
       >
         <div className="px-4 pt-5 pb-3 flex items-center justify-between">
           <div>
-            <h2 className="font-display text-lg text-primary font-semibold">PanelRx</h2>
+            <h2 className="font-display text-lg text-primary font-semibold">ClinicMate</h2>
             <p className="font-mono text-xs text-muted">Klinik Dr Vani</p>
           </div>
           <button

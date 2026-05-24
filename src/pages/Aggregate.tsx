@@ -42,7 +42,7 @@ export function Aggregate() {
       <div>
         <h2 className="font-display text-2xl text-ink">MMA Industry Aggregate</h2>
         <p className="text-body text-sm mt-1">
-          Anonymized data across 1,000+ solo GP clinics · PRD 6.5 · the evidence base MMA needs
+          Anonymized data across 1,000+ solo GP clinics ·  · the evidence base MMA needs
         </p>
       </div>
 

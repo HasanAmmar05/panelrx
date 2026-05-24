@@ -53,7 +53,7 @@ export function Connectors() {
       <div>
         <h2 className="font-display text-2xl text-ink">TPA Connectors</h2>
         <p className="text-body text-sm mt-1">
-          {connected} of {connectors.length} panels connected · PRD 7 Connector Framework
+          {connected} of {connectors.length} panels connected
         </p>
       </div>
 

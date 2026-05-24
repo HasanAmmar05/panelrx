@@ -14,7 +14,7 @@ export const eventBus = {
       try {
         listener(event);
       } catch (e) {
-        console.error('[PanelRx/eventBus] listener error:', e);
+        console.error('[ClinicMate/eventBus] listener error:', e);
       }
     }
   },

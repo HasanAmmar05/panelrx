@@ -97,44 +97,86 @@ export function AutoSweep() {
         </p>
       </div>
 
-      {/* Sweep Results Log */}
+      {/* Sweep Summary Dashboard */}
       <AnimatePresence>
         {sweepLog.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-surface border border-border rounded-lg p-5"
-          >
-            <h3 className="font-display text-lg text-ink mb-3">Sweep Results</h3>
-            <div className="space-y-2 max-h-64 overflow-y-auto">
-              {sweepLog.map((entry, i) => {
-                const config = OUTCOME_CONFIG[entry.outcome] ?? OUTCOME_CONFIG.pending;
-                const Icon = config.icon;
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+            {/* Summary header */}
+            <div className="bg-surface border border-border rounded-lg p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-display text-lg text-ink">Sweep Summary</h3>
+                <span className="font-mono text-xs text-muted">
+                  {new Date().toLocaleDateString('en-MY', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })} {'\u2022'} {new Date().toLocaleTimeString('en-MY', { hour12: false })}
+                </span>
+              </div>
+
+              {/* Outcome breakdown */}
+              {(() => {
+                const promised = sweepLog.filter((e) => e.outcome === 'promised_date').length;
+                const pending = sweepLog.filter((e) => e.outcome === 'pending').length;
+                const approved = sweepLog.filter((e) => e.outcome === 'approved').length;
+                const noResp = sweepLog.filter((e) => e.outcome === 'no_response').length;
+                const totalRm = sweepLog.reduce((s, e) => {
+                  const claim = queue.find((c) => c.id === e.id);
+                  return s + (claim?.grossAmountRm ?? 0);
+                }, 0);
+                const avgCooldown = Math.round(sweepLog.reduce((s, e) => s + e.cooldownDays, 0) / sweepLog.length);
+
                 return (
-                  <motion.div
-                    key={`${entry.id}-${i}`}
-                    initial={{ opacity: 0, x: -12 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="flex items-start gap-3 py-2 border-b border-border/50 last:border-0"
-                  >
-                    <Icon size={16} className={`${config.color} shrink-0 mt-0.5`} />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-mono text-xs text-ink font-medium">{entry.claimNo}</span>
-                        <span className="text-[10px] text-muted">{entry.tpa}</span>
-                        <span className={`text-[10px] font-medium ${config.color}`}>{config.label}</span>
-                        {entry.cooldownDays > 0 && entry.outcome !== 'paid' && (
-                          <span className="flex items-center gap-0.5 text-[10px] text-muted font-mono">
-                            <Timer size={10} />
-                            snooze {entry.cooldownDays}d
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-xs text-body mt-0.5">{entry.response}</p>
+                  <>
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                      <MiniCard label="Claims checked" value={String(sweepLog.length)} color="text-ink" />
+                      <MiniCard label="Promised date" value={String(promised)} color="text-primary" />
+                      <MiniCard label="Approved" value={String(approved)} color="text-positive" />
+                      <MiniCard label="Still pending" value={String(pending)} color="text-amber" />
+                      <MiniCard label="No response" value={String(noResp)} color="text-danger" />
                     </div>
-                  </motion.div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-3">
+                      <div className="bg-surface-elevated rounded-md border border-border p-3">
+                        <p className="font-mono text-[10px] text-muted uppercase">Total outstanding checked</p>
+                        <p className="font-display text-xl text-ink mt-1">RM {totalRm.toLocaleString()}</p>
+                      </div>
+                      <div className="bg-surface-elevated rounded-md border border-border p-3">
+                        <p className="font-mono text-[10px] text-muted uppercase">Avg cooldown set</p>
+                        <p className="font-display text-xl text-ink mt-1">{avgCooldown} days</p>
+                      </div>
+                      <div className="bg-surface-elevated rounded-md border border-border p-3">
+                        <p className="font-mono text-[10px] text-muted uppercase">Next auto-check</p>
+                        <p className="font-display text-xl text-primary mt-1">{new Date(Date.now() + avgCooldown * 86400000).toLocaleDateString('en-MY', { day: 'numeric', month: 'short' })}</p>
+                      </div>
+                    </div>
+                  </>
                 );
-              })}
+              })()}
+            </div>
+
+            {/* Detailed results */}
+            <div className="bg-surface border border-border rounded-lg p-5">
+              <h4 className="font-display text-sm text-ink mb-3">Detailed Results</h4>
+              <div className="space-y-2 max-h-64 overflow-y-auto">
+                {sweepLog.map((entry, i) => {
+                  const config = OUTCOME_CONFIG[entry.outcome] ?? OUTCOME_CONFIG.pending;
+                  const Icon = config.icon;
+                  return (
+                    <motion.div key={`${entry.id}-${i}`} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} className="flex items-start gap-3 py-2 border-b border-border/50 last:border-0">
+                      <Icon size={16} className={`${config.color} shrink-0 mt-0.5`} />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-mono text-xs text-ink font-medium">{entry.claimNo}</span>
+                          <span className="text-[10px] text-muted">{entry.tpa}</span>
+                          <span className={`text-[10px] font-medium ${config.color}`}>{config.label}</span>
+                          {entry.cooldownDays > 0 && entry.outcome !== 'paid' && (
+                            <span className="flex items-center gap-0.5 text-[10px] text-muted font-mono">
+                              <Timer size={10} /> snooze {entry.cooldownDays}d
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-body mt-0.5">{entry.response}</p>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
             </div>
           </motion.div>
         )}
@@ -245,6 +287,15 @@ function SummaryCard({ label, value, subtext, color }: { label: string; value: s
       <p className="font-mono text-[10px] text-muted uppercase tracking-wide">{label}</p>
       <p className={`font-display text-2xl tabular-nums mt-1 ${color}`}>{value}</p>
       <p className="text-[11px] text-muted mt-0.5">{subtext}</p>
+    </div>
+  );
+}
+
+function MiniCard({ label, value, color }: { label: string; value: string; color: string }) {
+  return (
+    <div className="bg-surface-elevated rounded-md border border-border p-3 text-center">
+      <p className={`font-display text-2xl tabular-nums ${color}`}>{value}</p>
+      <p className="font-mono text-[9px] text-muted uppercase mt-0.5">{label}</p>
     </div>
   );
 }

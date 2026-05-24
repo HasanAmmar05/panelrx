@@ -22,7 +22,7 @@ export function Landing() {
       {/* Top nav bar */}
       <header className="flex items-center justify-between px-6 md:px-16 py-4 max-w-7xl mx-auto">
         <div className="flex items-center gap-2">
-          <span className="font-display text-xl font-semibold text-primary">PanelRx</span>
+          <span className="font-display text-xl font-semibold text-primary">ClinicMate</span>
           <span className="text-xs text-muted font-mono border border-border px-1.5 py-0.5 rounded">v0.1 pilot</span>
         </div>
         <button
@@ -47,7 +47,7 @@ export function Landing() {
           </h1>
 
           <p className="font-sans text-lg text-body leading-relaxed max-w-lg mt-6">
-            PanelRx is an autonomous AI operations layer between the 9,600+
+            ClinicMate is an autonomous AI operations layer between the 9,600+
             solo Malaysian GP clinics and their 30+ third-party administrators.
             Eligibility, submission, follow-up, reconciliation — all handled by
             8 AI agents working as her shadow back office.

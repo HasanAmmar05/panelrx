@@ -5,6 +5,7 @@ import {
   RotateCcw,
   SkipBack,
   SkipForward,
+  Gauge,
 } from 'lucide-react';
 import { STAGES, TOTAL_DURATION_MS } from './config';
 import type { StageId } from './types';
@@ -14,11 +15,15 @@ type ControlBarProps = {
   elapsedInStage: number;
   isPlaying: boolean;
   hasEnded: boolean;
+  speed: number;
+  speedPresets: number[];
   onTogglePlay: () => void;
   onNext: () => void;
   onPrev: () => void;
   onSkipToEnd: () => void;
   onReplay: () => void;
+  onCycleSpeed: () => void;
+  onSetSpeed: (s: number) => void;
 };
 
 function formatTime(ms: number): string {
@@ -33,11 +38,15 @@ export function ControlBar({
   elapsedInStage,
   isPlaying,
   hasEnded,
+  speed,
+  speedPresets,
   onTogglePlay,
   onNext,
   onPrev,
   onSkipToEnd,
   onReplay,
+  onCycleSpeed,
+  onSetSpeed,
 }: ControlBarProps) {
   const completedBefore = STAGES.slice(0, currentStage - 1).reduce(
     (sum, s) => sum + s.durationMs,
@@ -49,6 +58,9 @@ export function ControlBar({
     'p-2 rounded-md text-ink hover:bg-primary-soft hover:text-primary transition-colors';
   const btnDisabled =
     'opacity-30 cursor-not-allowed hover:bg-transparent hover:text-ink';
+
+  const speedLabel = speed < 1 ? `${speed}x` : `${speed}x`;
+  const speedColor = speed <= 0.5 ? 'text-amber-400' : speed >= 1.5 ? 'text-emerald-400' : 'text-primary';
 
   return (
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 max-w-[calc(100vw-1.5rem)]">
@@ -82,8 +94,31 @@ export function ControlBar({
 
         <span className="block w-px h-5 bg-border-strong" aria-hidden />
 
+        {/* Speed control */}
+        <div className="flex items-center gap-1">
+          <Gauge size={14} className="text-muted" />
+          <div className="flex items-center gap-0.5">
+            {speedPresets.map((s) => (
+              <button
+                key={s}
+                type="button"
+                onClick={() => onSetSpeed(s)}
+                className={`px-1.5 py-0.5 rounded text-[10px] font-mono transition-all ${
+                  s === speed
+                    ? 'bg-primary text-white font-medium'
+                    : 'text-muted hover:text-ink hover:bg-primary-soft/30'
+                }`}
+              >
+                {s}x
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <span className="block w-px h-5 bg-border-strong" aria-hidden />
+
         <span className="font-mono text-xs text-body">
-          Stage {currentStage} of 9
+          Stage {currentStage}/9
         </span>
         <span className="font-mono text-xs text-muted tabular-nums">
           {formatTime(elapsedTotal)} / {formatTime(TOTAL_DURATION_MS)}

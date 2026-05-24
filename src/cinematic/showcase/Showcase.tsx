@@ -26,7 +26,7 @@ export function Showcase() {
           Phase 2 · Visual Vocabulary
         </p>
         <h1 className="font-display text-3xl md:text-4xl font-semibold">
-          PanelRx Visual Vocabulary
+          ClinicMate Visual Vocabulary
         </h1>
         <p className="text-body max-w-xl">
           QA surface for the cinematic primitives. ClockCounter intentionally omitted

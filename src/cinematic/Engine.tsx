@@ -1,12 +1,15 @@
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useState, useCallback } from 'react';
 import { STAGES } from './config';
 import { StageIndicator } from './StageIndicator';
 import { ControlBar } from './ControlBar';
 import { StageContent } from './StageContent';
+import { NarrationOverlay } from './NarrationOverlay';
 import type { EngineAction, EngineState, StageId } from './types';
 
 const TICK_INTERVAL = 100;
-const TICK_DELTA = 50; // 0.5x playback speed
+const BASE_TICK_DELTA = 50; // at 0.5x
+
+const SPEED_PRESETS = [0.25, 0.5, 1, 1.5, 2] as const;
 
 const initialState: EngineState = {
   currentStage: 1,
@@ -89,14 +92,26 @@ function engineReducer(state: EngineState, action: EngineAction): EngineState {
 
 export function Engine() {
   const [state, dispatch] = useReducer(engineReducer, initialState);
+  const [speedIdx, setSpeedIdx] = useState(1); // default 0.5x (index 1)
+  const speed = SPEED_PRESETS[speedIdx];
+
+  const cycleSpeed = useCallback(() => {
+    setSpeedIdx((i) => (i + 1) % SPEED_PRESETS.length);
+  }, []);
+
+  const setSpeed = useCallback((s: number) => {
+    const idx = SPEED_PRESETS.indexOf(s as typeof SPEED_PRESETS[number]);
+    if (idx >= 0) setSpeedIdx(idx);
+  }, []);
 
   useEffect(() => {
     if (!state.isPlaying) return;
+    const delta = BASE_TICK_DELTA * (speed / 0.5); // normalize so 0.5x = base
     const intervalId = window.setInterval(() => {
-      dispatch({ type: 'TICK', deltaMs: TICK_DELTA });
+      dispatch({ type: 'TICK', deltaMs: delta });
     }, TICK_INTERVAL);
     return () => window.clearInterval(intervalId);
-  }, [state.isPlaying]);
+  }, [state.isPlaying, speed]);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -108,11 +123,12 @@ export function Engine() {
         case 'ArrowLeft': dispatch({ type: 'PREV_STAGE' }); break;
         case 'KeyR': dispatch({ type: 'REPLAY' }); break;
         case 'Escape': dispatch({ type: 'SKIP_TO_END' }); break;
+        case 'BracketRight': cycleSpeed(); break;
       }
     }
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, []);
+  }, [cycleSpeed]);
 
   // Pause on blur
   useEffect(() => {
@@ -130,6 +146,10 @@ export function Engine() {
         elapsedInStage={state.elapsedInStage}
         hasEnded={state.hasEnded}
       />
+      <NarrationOverlay
+        currentStage={state.currentStage}
+        elapsedInStage={state.elapsedInStage}
+      />
       <StageContent
         currentStage={state.currentStage}
         elapsedInStage={state.elapsedInStage}
@@ -139,11 +159,15 @@ export function Engine() {
         elapsedInStage={state.elapsedInStage}
         isPlaying={state.isPlaying}
         hasEnded={state.hasEnded}
+        speed={speed}
+        speedPresets={SPEED_PRESETS as unknown as number[]}
         onTogglePlay={() => dispatch({ type: 'TOGGLE_PLAY' })}
         onNext={() => dispatch({ type: 'NEXT_STAGE' })}
         onPrev={() => dispatch({ type: 'PREV_STAGE' })}
         onSkipToEnd={() => dispatch({ type: 'SKIP_TO_END' })}
         onReplay={() => dispatch({ type: 'REPLAY' })}
+        onCycleSpeed={cycleSpeed}
+        onSetSpeed={setSpeed}
       />
     </div>
   );

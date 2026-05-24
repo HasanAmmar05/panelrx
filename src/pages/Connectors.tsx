@@ -102,7 +102,7 @@ export function Connectors() {
         <p className="font-display text-lg text-ink">55+ TPAs in MOH registry</p>
         <p className="text-body text-sm mt-1">New connectors added via configuration, not custom code</p>
         <button
-          onClick={() => showToast('Connector request submitted. We'll reach out within 24 hours.')}
+          onClick={() => showToast('Connector request submitted. We\u2019ll reach out within 24 hours.')}
           className="mt-4 border border-border text-body hover:border-primary hover:text-primary px-4 py-2 rounded-md text-sm font-mono transition-colors"
           type="button"
         >

@@ -2,9 +2,9 @@
 
 This file is the live source of truth for the build. Claude Code updates this after every phase.
 
-**Last updated**: 2026-05-24 (Phase 1 complete)
+**Last updated**: 2026-05-24 (Phase 3 complete)
 **Current phase**: (between phases)
-**Next phase**: Phase 2 — Visual Vocabulary
+**Next phase**: Phase 4 — Cinematic Stages 4-5
 
 > Scope note for this session: only Phases 1, 2, 3, 4, 5, 6, 7, 17 will run (3-hour budget). Phases 8–16 are marked `SKIPPED` and may be filled in later.
 > Harness specs (briefs, smoke tests, conventions, design-system, data-contracts) currently live at `panelrx-harness/panelrx-harness/.claude/`. Auto-mode policy blocks hoisting into `.claude/`, so spec lookups reference that path directly.
@@ -28,7 +28,7 @@ This file is the live source of truth for the build. Claude Code updates this af
 |---|---|---|---|---|---|
 | 1 | Stage Engine | COMPLETE | 2026-05-24 | 2026-05-24 | Rebuilt from a wrong placeholder. framer-motion pinned to ^11 (12.40.0 threw "Invalid hook call" on React 19.2.6). |
 | 2 | Visual Vocabulary | COMPLETE | 2026-05-24 | 2026-05-24 | 6 of 7 primitives built (ClockCounter skipped per session scope). `/showcase` route live. |
-| 3 | Cinematic Stages 1-3 | NOT_STARTED | — | — | — |
+| 3 | Cinematic Stages 1-3 | COMPLETE | 2026-05-24 | 2026-05-24 | Stage1Trigger, Stage2Verification, Stage3Consultation built. StageContent router pattern. Content data in STAGE_CONTENT. |
 | 4 | Cinematic Stages 4-5 | NOT_STARTED | — | — | — |
 | 5 | Cinematic Stage 6 (Crown Jewel) | NOT_STARTED | — | — | — |
 | 6 | Cinematic Stages 7-9 | NOT_STARTED | — | — | — |

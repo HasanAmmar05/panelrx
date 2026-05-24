@@ -5,7 +5,8 @@ import { ControlBar } from './ControlBar';
 import { StageContent } from './StageContent';
 import type { EngineAction, EngineState, StageId } from './types';
 
-const TICK_MS = 100;
+const TICK_INTERVAL = 100;
+const TICK_DELTA = 50; // 0.5x playback speed
 
 const initialState: EngineState = {
   currentStage: 1,
@@ -92,8 +93,8 @@ export function Engine() {
   useEffect(() => {
     if (!state.isPlaying) return;
     const intervalId = window.setInterval(() => {
-      dispatch({ type: 'TICK', deltaMs: TICK_MS });
-    }, TICK_MS);
+      dispatch({ type: 'TICK', deltaMs: TICK_DELTA });
+    }, TICK_INTERVAL);
     return () => window.clearInterval(intervalId);
   }, [state.isPlaying]);
 

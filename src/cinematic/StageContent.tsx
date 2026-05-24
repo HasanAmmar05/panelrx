@@ -3,6 +3,8 @@ import { PlaceholderContent } from './PlaceholderContent';
 import { Stage1Trigger } from './stages/Stage1Trigger';
 import { Stage2Verification } from './stages/Stage2Verification';
 import { Stage3Consultation } from './stages/Stage3Consultation';
+import { Stage4Submission } from './stages/Stage4Submission';
+import { Stage5TimeSkip } from './stages/Stage5TimeSkip';
 import type { StageId } from './types';
 
 type StageContentProps = {
@@ -18,6 +20,10 @@ function renderStage(currentStage: StageId, elapsedInStage: number) {
       return <Stage2Verification elapsedMs={elapsedInStage} />;
     case 3:
       return <Stage3Consultation elapsedMs={elapsedInStage} />;
+    case 4:
+      return <Stage4Submission elapsedMs={elapsedInStage} />;
+    case 5:
+      return <Stage5TimeSkip elapsedMs={elapsedInStage} />;
     default:
       return (
         <PlaceholderContent

@@ -27,7 +27,7 @@ This file is the live source of truth for the build. Claude Code updates this af
 | # | Phase | Status | Started | Completed | Notes |
 |---|---|---|---|---|---|
 | 1 | Stage Engine | COMPLETE | 2026-05-24 | 2026-05-24 | Rebuilt from a wrong placeholder. framer-motion pinned to ^11 (12.40.0 threw "Invalid hook call" on React 19.2.6). |
-| 2 | Visual Vocabulary | NOT_STARTED | — | — | ClockCounter to be skipped (animated date string in Stage 5 instead). |
+| 2 | Visual Vocabulary | COMPLETE | 2026-05-24 | 2026-05-24 | 6 of 7 primitives built (ClockCounter skipped per session scope). `/showcase` route live. |
 | 3 | Cinematic Stages 1-3 | NOT_STARTED | — | — | — |
 | 4 | Cinematic Stages 4-5 | NOT_STARTED | — | — | — |
 | 5 | Cinematic Stage 6 (Crown Jewel) | NOT_STARTED | — | — | — |

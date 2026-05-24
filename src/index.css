@@ -66,4 +66,19 @@
   .tabular-nums {
     font-variant-numeric: tabular-nums;
   }
+
+  .animate-blink {
+    animation: blink 0.53s steps(1) infinite;
+  }
+}
+
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
 }

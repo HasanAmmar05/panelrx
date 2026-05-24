@@ -38,7 +38,7 @@ export function Eligibility() {
       <div>
         <h2 className="font-display text-2xl text-ink">Eligibility Check</h2>
         <p className="text-body text-sm mt-1">
-          Verify patient coverage across all panels simultaneously · 
+          Verify patient coverage across all panels simultaneously
         </p>
       </div>
 

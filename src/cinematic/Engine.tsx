@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useState, useCallback } from 'react';
-import { STAGES } from './config';
+import { STAGES, TOTAL_DURATION_MS } from './config';
 import { StageIndicator } from './StageIndicator';
 import { ControlBar } from './ControlBar';
 import { StageContent } from './StageContent';
@@ -10,6 +10,26 @@ const TICK_INTERVAL = 100;
 const BASE_TICK_DELTA = 50; // at 0.5x
 
 const SPEED_PRESETS = [0.25, 0.5, 1, 1.5, 2] as const;
+
+function getAbsoluteTime(stage: number, elapsedInStage: number): number {
+  let time = 0;
+  for (let i = 0; i < stage - 1; i++) {
+    time += STAGES[i].durationMs;
+  }
+  return time + elapsedInStage;
+}
+
+function getStageAndElapsed(absoluteTime: number): { currentStage: StageId; elapsedInStage: number } {
+  let remaining = Math.max(0, Math.min(absoluteTime, TOTAL_DURATION_MS));
+  for (let i = 0; i < STAGES.length; i++) {
+    const duration = STAGES[i].durationMs;
+    if (remaining < duration) {
+      return { currentStage: (i + 1) as StageId, elapsedInStage: remaining };
+    }
+    remaining -= duration;
+  }
+  return { currentStage: 9, elapsedInStage: STAGES[8].durationMs };
+}
 
 const initialState: EngineState = {
   currentStage: 1,
@@ -85,6 +105,19 @@ function engineReducer(state: EngineState, action: EngineAction): EngineState {
         isPlaying: false,
         hasEnded: true,
       };
+    case 'SEEK': {
+      const currentAbsolute = getAbsoluteTime(state.currentStage, state.elapsedInStage);
+      const newAbsolute = currentAbsolute + action.deltaMs;
+      const { currentStage, elapsedInStage } = getStageAndElapsed(newAbsolute);
+      const hasEnded = newAbsolute >= TOTAL_DURATION_MS;
+      return {
+        ...state,
+        currentStage,
+        elapsedInStage,
+        isPlaying: hasEnded ? false : state.isPlaying,
+        hasEnded,
+      };
+    }
     default:
       return state;
   }
@@ -94,7 +127,7 @@ export function Engine() {
   const [state, dispatch] = useReducer(engineReducer, initialState);
   const [speedIdx, setSpeedIdx] = useState(1); // default 0.5x (index 1)
   const speed = SPEED_PRESETS[speedIdx];
-  const [lightTheme, setLightTheme] = useState(false);
+  const [lightTheme, setLightTheme] = useState(true);
 
   const cycleSpeed = useCallback(() => {
     setSpeedIdx((i) => (i + 1) % SPEED_PRESETS.length);
@@ -171,6 +204,7 @@ export function Engine() {
         onReplay={() => dispatch({ type: 'REPLAY' })}
         onCycleSpeed={cycleSpeed}
         onSetSpeed={setSpeed}
+        onSeek={(deltaMs) => dispatch({ type: 'SEEK', deltaMs })}
       />
     </div>
   );

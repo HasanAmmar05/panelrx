@@ -28,6 +28,7 @@ type ControlBarProps = {
   onReplay: () => void;
   onCycleSpeed: () => void;
   onSetSpeed: (s: number) => void;
+  onSeek: (deltaMs: number) => void;
 };
 
 function formatTime(ms: number): string {
@@ -53,6 +54,7 @@ export function ControlBar({
   onReplay,
   onCycleSpeed,
   onSetSpeed,
+  onSeek,
 }: ControlBarProps) {
   const completedBefore = STAGES.slice(0, currentStage - 1).reduce(
     (sum, s) => sum + s.durationMs,
@@ -99,6 +101,58 @@ export function ControlBar({
         </button>
 
         <span className="block w-px h-5 bg-border-strong" aria-hidden />
+
+        {/* Seek Controls */}
+        <div className="flex items-center gap-0.5">
+          <button
+            type="button"
+            onClick={() => onSeek(-15000)}
+            className="px-1.5 py-0.5 rounded text-[10px] font-mono text-muted hover:text-ink hover:bg-primary-soft/30 transition-colors"
+            title="Seek back 15s"
+          >
+            -15s
+          </button>
+          <button
+            type="button"
+            onClick={() => onSeek(-5000)}
+            className="px-1.5 py-0.5 rounded text-[10px] font-mono text-muted hover:text-ink hover:bg-primary-soft/30 transition-colors"
+            title="Seek back 5s"
+          >
+            -5s
+          </button>
+          <button
+            type="button"
+            onClick={() => onSeek(-1000)}
+            className="px-1.5 py-0.5 rounded text-[10px] font-mono text-muted hover:text-ink hover:bg-primary-soft/30 transition-colors"
+            title="Seek back 1s"
+          >
+            -1s
+          </button>
+          <button
+            type="button"
+            onClick={() => onSeek(1000)}
+            className="px-1.5 py-0.5 rounded text-[10px] font-mono text-muted hover:text-ink hover:bg-primary-soft/30 transition-colors"
+            title="Seek forward 1s"
+          >
+            +1s
+          </button>
+          <button
+            type="button"
+            onClick={() => onSeek(5000)}
+            className="px-1.5 py-0.5 rounded text-[10px] font-mono text-muted hover:text-ink hover:bg-primary-soft/30 transition-colors"
+            title="Seek forward 5s"
+          >
+            +5s
+          </button>
+          <button
+            type="button"
+            onClick={() => onSeek(15000)}
+            className="px-1.5 py-0.5 rounded text-[10px] font-mono text-muted hover:text-ink hover:bg-primary-soft/30 transition-colors"
+            title="Seek forward 15s"
+          >
+            +15s
+          </button>
+        </div>
 
         {/* Speed control */}
         <div className="flex items-center gap-1">
@@ -158,20 +212,17 @@ export function ControlBar({
           </>
         )}
 
-        {hasEnded && (
-          <>
-            <span className="block w-px h-5 bg-border-strong" aria-hidden />
-            <button
-              type="button"
-              aria-label="Replay"
-              className={`${btn} flex items-center gap-1`}
-              onClick={onReplay}
-            >
-              <RotateCcw size={18} />
-              <span className="font-mono text-xs hidden sm:inline">Replay</span>
-            </button>
-          </>
-        )}
+        <span className="block w-px h-5 bg-border-strong" aria-hidden />
+        <button
+          type="button"
+          aria-label="Replay / Restart from beginning"
+          className={`${btn} flex items-center gap-1`}
+          onClick={onReplay}
+          title="Restart from beginning"
+        >
+          <RotateCcw size={18} />
+          <span className="font-mono text-xs hidden sm:inline">Replay</span>
+        </button>
       </div>
     </div>
   );

@@ -21,4 +21,5 @@ export type EngineAction =
   | { type: 'REPLAY' }
   | { type: 'TOGGLE_PLAY' }
   | { type: 'JUMP_TO_STAGE'; stage: StageId }
-  | { type: 'SKIP_TO_END' };
+  | { type: 'SKIP_TO_END' }
+  | { type: 'SEEK'; deltaMs: number };

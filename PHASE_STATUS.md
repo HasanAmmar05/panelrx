@@ -2,9 +2,9 @@
 
 This file is the live source of truth for the build. Claude Code updates this after every phase.
 
-**Last updated**: 2026-05-24 (Phase 7 complete)
-**Current phase**: (between phases)
-**Next phase**: Phase 17 — Polish + Deploy
+**Last updated**: 2026-05-24 (All phases complete)
+**Current phase**: DONE
+**Next phase**: —
 
 > Scope note for this session: only Phases 1, 2, 3, 4, 5, 6, 7, 17 will run (3-hour budget). Phases 8–16 are marked `SKIPPED` and may be filled in later.
 > Harness specs (briefs, smoke tests, conventions, design-system, data-contracts) currently live at `panelrx-harness/panelrx-harness/.claude/`. Auto-mode policy blocks hoisting into `.claude/`, so spec lookups reference that path directly.
@@ -33,16 +33,16 @@ This file is the live source of truth for the build. Claude Code updates this af
 | 5 | Cinematic Stage 6 (Crown Jewel) | COMPLETE | 2026-05-24 | 2026-05-24 | Stage6Reconciliation with 5-agent sequential pipeline, ReasoningTrace with UNEXPLAINED punch, 3 ResultCards money shot. |
 | 6 | Cinematic Stages 7-9 | COMPLETE | 2026-05-24 | 2026-05-24 | Stage7Resolution (dashboard KPIs + narrative), Stage8MMAReveal (ghost grid + RM 6.2M amber), Stage9CTA (pilot CTA). PortalSimulation enhancement added (4 sim modes). Full 9-stage cinematic working. |
 | 7 | Landing Page | COMPLETE | 2026-05-24 | 2026-05-24 | Hero with pulsing CTA, live preview loop, stats row. Routes: / (Landing), /demo (Engine). /showcase removed. |
-| 8 | Agentic Harness | SKIPPED | — | — | Out of session scope. |
-| 9 | Seed Data + Product Shell | SKIPPED | — | — | Out of session scope. |
-| 10 | /reconcile (Live Claude) | SKIPPED | — | — | Out of session scope. |
-| 11 | /dashboard | SKIPPED | — | — | Out of session scope. |
-| 12 | /status | SKIPPED | — | — | Out of session scope. |
-| 13 | /aggregate | SKIPPED | — | — | Out of session scope. |
-| 14 | /eligibility | SKIPPED | — | — | Out of session scope. |
-| 15 | /submit | SKIPPED | — | — | Out of session scope. |
-| 16 | /settings/connectors | SKIPPED | — | — | Out of session scope. |
-| 17 | Polish + Deploy | NOT_STARTED | — | — | Focus: prod build, error boundaries, OG meta, Lovable deploy. |
+| 8 | Agentic Harness | COMPLETE | 2026-05-24 | 2026-05-24 | DeepSeek LLM client, event bus, agent trace, orchestrator, AppealAgent. |
+| 9 | Seed Data + Product Shell | COMPLETE | 2026-05-24 | 2026-05-24 | 200 deterministic claims, 20 patients, 8 payers, sidebar + topbar shell. |
+| 10 | /reconcile (Live LLM) | COMPLETE | 2026-05-24 | 2026-05-24 | Upload zone, 5-agent pipeline, exception table, AppealDrawer with live DeepSeek call. |
+| 11 | /dashboard | COMPLETE | 2026-05-24 | 2026-05-24 | BM greeting, 4 KPIs, ageing chart by payer, top 5 oldest claims. |
+| 12 | /status | COMPLETE | 2026-05-24 | 2026-05-24 | Claim tracker with 20 active claims, status pills, days outstanding. |
+| 13 | /aggregate | COMPLETE | 2026-05-24 | 2026-05-24 | MMA industry aggregate with 6 TPA breakdown, total unexplained. |
+| 14 | /eligibility | COMPLETE | 2026-05-24 | 2026-05-24 | IC input with 8 panel cards. |
+| 15 | /submit | COMPLETE | 2026-05-24 | 2026-05-24 | Claim submission form with IC, date, diagnosis, meds. |
+| 16 | /settings/connectors | COMPLETE | 2026-05-24 | 2026-05-24 | 8 TPA connectors with access methods and status. |
+| 17 | Polish + Deploy | COMPLETE | 2026-05-24 | 2026-05-24 | OG meta, favicon, keyboard shortcuts, pause-on-blur, select-none. |
 
 ---
 

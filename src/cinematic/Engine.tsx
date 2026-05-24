@@ -98,6 +98,31 @@ export function Engine() {
     return () => window.clearInterval(intervalId);
   }, [state.isPlaying]);
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      switch (e.code) {
+        case 'Space': e.preventDefault(); dispatch({ type: 'TOGGLE_PLAY' }); break;
+        case 'ArrowRight': dispatch({ type: 'NEXT_STAGE' }); break;
+        case 'ArrowLeft': dispatch({ type: 'PREV_STAGE' }); break;
+        case 'KeyR': dispatch({ type: 'REPLAY' }); break;
+        case 'Escape': dispatch({ type: 'SKIP_TO_END' }); break;
+      }
+    }
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, []);
+
+  // Pause on blur
+  useEffect(() => {
+    function handleVisibility() {
+      if (document.hidden && state.isPlaying) dispatch({ type: 'TOGGLE_PLAY' });
+    }
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, [state.isPlaying]);
+
   return (
     <div className="relative min-h-screen bg-background text-ink overflow-hidden select-none">
       <StageIndicator

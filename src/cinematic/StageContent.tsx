@@ -1,11 +1,13 @@
 import { AnimatePresence, motion } from 'framer-motion';
-import { PlaceholderContent } from './PlaceholderContent';
 import { Stage1Trigger } from './stages/Stage1Trigger';
 import { Stage2Verification } from './stages/Stage2Verification';
 import { Stage3Consultation } from './stages/Stage3Consultation';
 import { Stage4Submission } from './stages/Stage4Submission';
 import { Stage5TimeSkip } from './stages/Stage5TimeSkip';
 import { Stage6Reconciliation } from './stages/Stage6Reconciliation';
+import { Stage7Resolution } from './stages/Stage7Resolution';
+import { Stage8MMAReveal } from './stages/Stage8MMAReveal';
+import { Stage9CTA } from './stages/Stage9CTA';
 import type { StageId } from './types';
 
 type StageContentProps = {
@@ -27,13 +29,12 @@ function renderStage(currentStage: StageId, elapsedInStage: number) {
       return <Stage5TimeSkip elapsedMs={elapsedInStage} />;
     case 6:
       return <Stage6Reconciliation elapsedMs={elapsedInStage} />;
-    default:
-      return (
-        <PlaceholderContent
-          currentStage={currentStage}
-          elapsedInStage={elapsedInStage}
-        />
-      );
+    case 7:
+      return <Stage7Resolution elapsedMs={elapsedInStage} />;
+    case 8:
+      return <Stage8MMAReveal elapsedMs={elapsedInStage} />;
+    case 9:
+      return <Stage9CTA elapsedMs={elapsedInStage} />;
   }
 }
 

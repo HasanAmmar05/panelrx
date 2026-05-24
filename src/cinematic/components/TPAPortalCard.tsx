@@ -7,6 +7,7 @@ import {
   XCircle,
   type LucideIcon,
 } from 'lucide-react';
+import { PortalSimulation } from './PortalSimulation';
 
 type AccessMethod = 'api' | 'portal' | 'hotline' | 'app';
 type Status = 'calling' | 'success' | 'failure';
@@ -56,11 +57,7 @@ export function TPAPortalCard({
 
       <div className="h-20 relative">
         {status === 'calling' && (
-          <div className="space-y-2 pt-1">
-            <div className="h-2 rounded bg-border animate-pulse w-3/4" />
-            <div className="h-2 rounded bg-border animate-pulse w-1/2" />
-            <div className="h-2 rounded bg-border animate-pulse w-2/3" />
-          </div>
+          <PortalSimulation tpaName={tpaName} accessMethod={accessMethod} />
         )}
         {status === 'success' && responseText && (
           <>

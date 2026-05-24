@@ -1,5 +1,7 @@
 # 🏥 ClinicMate — Healthcare Operations Automation
 
+🔗 **Live Demo:** [https://clinicmate-ashy.vercel.app/](https://clinicmate-ashy.vercel.app/)
+
 ClinicMate is an autonomous AI agent operations layer designed to solve the RM 1.4 Billion administrative cashflow crunch for Malaysia's 9,600+ solo GP clinics. 
 
 It acts as a shadow back-office that automates the entire claims lifecycle between clinics and their 30+ Third-Party Administrators (TPAs) — from patient check-in to payment reconciliation.

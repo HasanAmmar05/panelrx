@@ -143,3 +143,55 @@ export const EXCEPTIONS_DEMO = [
   { id: 'exc_5', tpa: 'IHP', patient: 'Priya Sundaram', patientIc: '920815-08-****', date: '12-Feb-2026', billed: 110, paid: 77, reason: 'formulary substitution — drug IS on formulary', severity: 'med' as const, remittanceRef: 'IHP-REM-2026-02-447' },
   { id: 'exc_6', tpa: 'IHP', patient: 'Muhammad Faiz', patientIc: '951108-10-****', date: '19-Feb-2026', billed: 78, paid: 55, reason: 'formulary substitution — drug IS on formulary', severity: 'med' as const, remittanceRef: 'IHP-REM-2026-02-447' },
 ];
+
+// ─── Follow-Up Agent Activity Log ───
+export type FollowUp = {
+  id: string;
+  claimNo: string;
+  payerId: string;
+  tpaName: string;
+  type: 'reminder' | 'escalation' | 'final_notice' | 'response_received';
+  sentAt: string;
+  status: 'sent' | 'delivered' | 'acknowledged' | 'ignored';
+  message: string;
+  daysOverdue: number;
+};
+
+export const FOLLOW_UPS: FollowUp[] = [
+  { id: 'fu_1', claimNo: 'PRX-2026-10003', payerId: 'p_micare', tpaName: 'MiCare', type: 'reminder', sentAt: '2026-04-01T09:00:00Z', status: 'delivered', message: 'Payment reminder: Claim PRX-2026-10003 outstanding 45 days. Contractual term: 30 days. Please expedite.', daysOverdue: 15 },
+  { id: 'fu_2', claimNo: 'PRX-2026-10007', payerId: 'p_ihp', tpaName: 'IHP', type: 'escalation', sentAt: '2026-04-05T10:30:00Z', status: 'sent', message: 'ESCALATION: Claim PRX-2026-10007 overdue 78 days (2.6x contract term). Requesting immediate attention per panel agreement clause 4.2.', daysOverdue: 48 },
+  { id: 'fu_3', claimNo: 'PRX-2026-10012', payerId: 'p_mediexp', tpaName: 'MediExpress', type: 'reminder', sentAt: '2026-04-08T08:15:00Z', status: 'delivered', message: 'Payment reminder: Claim PRX-2026-10012 outstanding 52 days. Second reminder.', daysOverdue: 22 },
+  { id: 'fu_4', claimNo: 'PRX-2026-10007', payerId: 'p_ihp', tpaName: 'IHP', type: 'final_notice', sentAt: '2026-04-12T11:00:00Z', status: 'sent', message: 'FINAL NOTICE: Claim PRX-2026-10007 overdue 85 days. If no response within 7 days, this will be escalated to MMA complaint mechanism.', daysOverdue: 55 },
+  { id: 'fu_5', claimNo: 'PRX-2026-10015', payerId: 'p_pmcare', tpaName: 'PMCare', type: 'reminder', sentAt: '2026-04-10T09:30:00Z', status: 'acknowledged', message: 'Payment reminder: Claim PRX-2026-10015 outstanding 38 days.', daysOverdue: 8 },
+  { id: 'fu_6', claimNo: 'PRX-2026-10003', payerId: 'p_micare', tpaName: 'MiCare', type: 'response_received', sentAt: '2026-04-14T14:20:00Z', status: 'acknowledged', message: 'MiCare responded: "Payment processed in next batch cycle (April 18)." Tracking.', daysOverdue: 0 },
+  { id: 'fu_7', claimNo: 'PRX-2026-10022', payerId: 'p_mediexp', tpaName: 'MediExpress', type: 'escalation', sentAt: '2026-04-15T09:00:00Z', status: 'sent', message: 'ESCALATION: Claim PRX-2026-10022 overdue 65 days. Multiple 8% deductions still unresolved.', daysOverdue: 35 },
+  { id: 'fu_8', claimNo: 'PRX-2026-10030', payerId: 'p_selcare', tpaName: 'SelCare', type: 'reminder', sentAt: '2026-04-16T08:00:00Z', status: 'delivered', message: 'Payment reminder: Claim PRX-2026-10030 outstanding 32 days. Friendly check-in.', daysOverdue: 2 },
+  { id: 'fu_9', claimNo: 'PRX-2026-10015', payerId: 'p_pmcare', tpaName: 'PMCare', type: 'response_received', sentAt: '2026-04-17T16:45:00Z', status: 'acknowledged', message: 'PMCare responded: "Claim approved. Payment scheduled for April 22."', daysOverdue: 0 },
+  { id: 'fu_10', claimNo: 'PRX-2026-10045', payerId: 'p_ihp', tpaName: 'IHP', type: 'final_notice', sentAt: '2026-04-18T10:00:00Z', status: 'ignored', message: 'FINAL NOTICE: Claim PRX-2026-10045 overdue 92 days. MMA complaint filing imminent.', daysOverdue: 62 },
+];
+
+// ─── Fake Eligibility Results ───
+export type EligibilityCheckResult = {
+  payerId: string;
+  tpaName: string;
+  status: 'active' | 'not_covered' | 'expired' | 'error';
+  planName?: string;
+  remainingLimitRm?: number;
+  visitCapRm?: number;
+  copayRm?: number;
+  notes?: string;
+  latencyMs: number;
+};
+
+export function getEligibilityResults(ic: string): EligibilityCheckResult[] {
+  // Deterministic results based on IC
+  return [
+    { payerId: 'p_micare', tpaName: 'MiCare', status: 'active', planName: 'Corporate Gold', remainingLimitRm: 2450, visitCapRm: 80, copayRm: 0, latencyMs: 340, notes: 'Employer: Petronas Chemicals' },
+    { payerId: 'p_mediexp', tpaName: 'MediExpress', status: 'active', planName: 'MediPlan Standard', remainingLimitRm: 1800, visitCapRm: 65, copayRm: 10, latencyMs: 780, notes: '8% admin fee applies' },
+    { payerId: 'p_ihp', tpaName: 'IHP', status: 'not_covered', latencyMs: 420, notes: 'Member not found in IHP database' },
+    { payerId: 'p_pmcare', tpaName: 'PMCare', status: 'active', planName: 'PMCare Plus', remainingLimitRm: 3200, visitCapRm: 90, copayRm: 0, latencyMs: 550 },
+    { payerId: 'p_selcare', tpaName: 'SelCare', status: 'active', planName: 'Skim Selangor', remainingLimitRm: 5000, visitCapRm: 120, copayRm: 0, latencyMs: 210, notes: 'No cap on consultation fees' },
+    { payerId: 'p_pekab40', tpaName: 'PeKa B40', status: ic.startsWith('9') ? 'active' : 'not_covered', planName: 'PeKa B40', remainingLimitRm: 500, visitCapRm: 50, copayRm: 0, latencyMs: 380 },
+  ];
+}
+

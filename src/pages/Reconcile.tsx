@@ -69,7 +69,7 @@ export function Reconcile() {
           <p className="text-muted text-sm my-4">— OR —</p>
           <button
             onClick={startPipeline}
-            className="bg-primary text-background hover:bg-primary-deep px-6 py-3 rounded-md font-medium transition-colors"
+            className="bg-primary text-white hover:bg-primary-deep px-6 py-3 rounded-md font-medium transition-colors"
             type="button"
           >
             Try Dr. Vani's actual remittances →

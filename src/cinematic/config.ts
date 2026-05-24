@@ -150,18 +150,19 @@ export const STAGE_CONTENT = {
   stage5: {
     fromDate: '2026-02-14',
     toDate: '2026-04-17',
-    sweepDurationMs: 4500,
+    sweepDurationMs: 6000,
     events: [
-      { atProgress: 0.15, label: "Day 14 · MiCare moves claim to 'in review'" },
-      {
-        atProgress: 0.35,
-        label: 'Day 27 · MediExpress requests additional documentation',
-      },
-      { atProgress: 0.5, label: 'Day 38 · StatusAgent auto-uploads supporting documents' },
-      { atProgress: 0.7, label: "Day 47 · MediExpress moves to 'approved partial'" },
-      { atProgress: 0.9, label: "Day 58 · MiCare → 'paid' · remittance generated" },
+      { atProgress: 0.10, label: "Day 14 · MiCare moves claim to 'in review'" },
+      { atProgress: 0.22, label: 'Day 27 · MediExpress requests additional documentation' },
+      { atProgress: 0.30, label: 'Day 30 · FollowUpAgent sends payment reminder to MiCare', type: 'followup' as const },
+      { atProgress: 0.38, label: 'Day 35 · StatusAgent auto-uploads supporting documents to MediExpress' },
+      { atProgress: 0.48, label: 'Day 42 · FollowUpAgent escalates MediExpress — overdue 12 days', type: 'followup' as const },
+      { atProgress: 0.58, label: "Day 47 · MediExpress moves to 'approved partial'" },
+      { atProgress: 0.68, label: 'Day 52 · FollowUpAgent receives response from MiCare: "batch cycle April 18"', type: 'followup' as const },
+      { atProgress: 0.80, label: "Day 58 · MiCare → 'paid' · remittance generated" },
+      { atProgress: 0.92, label: "Day 62 · FollowUpAgent sends final notice to IHP — 85 days overdue", type: 'followup' as const },
     ],
-    closingLine: "Dr. Vani didn't check a single portal during these 62 days.",
+    closingLine: "Dr. Vani didn't check a single portal, make a single call, or send a single email during these 62 days.",
   },
   stage6: {
     prePipeline: {

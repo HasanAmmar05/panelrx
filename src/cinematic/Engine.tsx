@@ -124,7 +124,7 @@ export function Engine() {
   }, [state.isPlaying]);
 
   return (
-    <div className="relative min-h-screen bg-background text-ink overflow-hidden select-none">
+    <div className="cinematic-dark relative min-h-screen bg-background text-ink overflow-hidden select-none">
       <StageIndicator
         currentStage={state.currentStage}
         elapsedInStage={state.elapsedInStage}

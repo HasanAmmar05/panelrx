@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Play } from 'lucide-react';
+import { ArrowRight, Play, LayoutDashboard } from 'lucide-react';
 import { LandingPreview } from './LandingPreview';
 
 const PULSE_RING = {
@@ -19,7 +19,23 @@ export function Landing() {
 
   return (
     <div className="min-h-screen bg-background text-ink">
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-8 px-6 md:px-16 py-12 max-w-7xl mx-auto items-center min-h-screen">
+      {/* Top nav bar */}
+      <header className="flex items-center justify-between px-6 md:px-16 py-4 max-w-7xl mx-auto">
+        <div className="flex items-center gap-2">
+          <span className="font-display text-xl font-semibold text-primary">PanelRx</span>
+          <span className="text-xs text-muted font-mono border border-border px-1.5 py-0.5 rounded">v0.1 pilot</span>
+        </div>
+        <button
+          onClick={() => navigate('/dashboard')}
+          className="flex items-center gap-2 text-sm text-body hover:text-ink transition-colors font-medium"
+          type="button"
+        >
+          <LayoutDashboard size={16} />
+          Open Dashboard
+        </button>
+      </header>
+
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-8 px-6 md:px-16 py-8 max-w-7xl mx-auto items-center" style={{ minHeight: 'calc(100vh - 64px)' }}>
         {/* Left half */}
         <div className="md:col-span-3 flex flex-col justify-center">
           <p className="font-mono text-xs text-primary tracking-widest uppercase">
@@ -51,20 +67,33 @@ export function Landing() {
             </p>
           </div>
 
-          {/* THE CTA */}
-          <div className="relative inline-block mt-10 self-start">
-            <motion.div
-              className="absolute inset-0 rounded-md border-2 border-primary"
-              {...PULSE_RING}
-            />
+          {/* CTAs */}
+          <div className="flex flex-wrap items-center gap-4 mt-10">
+            {/* Primary CTA — Watch Demo */}
+            <div className="relative inline-block">
+              <motion.div
+                className="absolute inset-0 rounded-md border-2 border-primary"
+                {...PULSE_RING}
+              />
+              <button
+                onClick={() => navigate('/demo')}
+                className="relative bg-primary text-white hover:bg-primary-deep px-7 py-4 rounded-md font-display text-lg font-semibold flex items-center gap-3 transition-colors"
+                type="button"
+              >
+                <Play size={20} fill="currentColor" />
+                Watch the demo
+                <ArrowRight size={18} />
+              </button>
+            </div>
+
+            {/* Secondary CTA — Open Product */}
             <button
-              onClick={() => navigate('/demo')}
-              className="relative bg-primary text-background hover:bg-primary-deep px-8 py-5 rounded-md font-display text-lg md:text-xl font-semibold flex items-center gap-3 transition-colors"
+              onClick={() => navigate('/dashboard')}
+              className="border border-border text-body hover:border-primary hover:text-primary px-6 py-4 rounded-md font-display text-lg font-medium flex items-center gap-2 transition-colors"
               type="button"
             >
-              <Play size={22} fill="currentColor" />
-              Watch what happens when a patient walks in
-              <ArrowRight size={20} />
+              <LayoutDashboard size={18} />
+              Try the product
             </button>
           </div>
 
@@ -74,8 +103,7 @@ export function Landing() {
 
           {/* Footer */}
           <p className="mt-12 text-xs text-muted font-mono">
-            Built with Lovable · Claude Sonnet 4.6 + Haiku 4.5 on AWS
-            Bedrock · Strands multi-agent · Supabase
+            Built with Lovable · DeepSeek AI · Multi-agent orchestration · Supabase
           </p>
         </div>
 

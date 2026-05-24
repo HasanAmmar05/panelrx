@@ -96,8 +96,12 @@ export function Stage5TimeSkip({ elapsedMs }: Stage5TimeSkipProps) {
                       transition={{ duration: 0.3 }}
                       className="flex items-start gap-2"
                     >
-                      <span className="mt-1.5 w-2 h-2 rounded-full bg-primary shrink-0" />
-                      <span className="font-mono text-xs text-body">{event.label}</span>
+                      <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${
+                        (event as { type?: string }).type === 'followup' ? 'bg-amber' : 'bg-primary'
+                      }`} />
+                      <span className={`font-mono text-xs ${
+                        (event as { type?: string }).type === 'followup' ? 'text-amber' : 'text-body'
+                      }`}>{event.label}</span>
                     </motion.div>
                   ))}
                 </AnimatePresence>

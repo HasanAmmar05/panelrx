@@ -1,12 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { Upload } from 'lucide-react';
-import { CLAIMS } from '../data/seed';
+import { CLAIMS, PATIENTS } from '../data/seed';
 import { PAYERS } from '../data/payers';
 import { formatRM, formatDateMY } from '../lib/utils';
-import { PATIENTS } from '../data/seed';
 
 const AGEING_BUCKETS = [
-  { label: '0-30d', max: 30, color: 'bg-amber/60' },
+  { label: '0-30d', max: 30, color: 'bg-amber/40' },
   { label: '31-60d', max: 60, color: 'bg-amber' },
   { label: '61-90d', max: 90, color: 'bg-orange-500' },
   { label: '91-180d', max: 180, color: 'bg-danger/80' },
@@ -70,18 +69,18 @@ export function Dashboard() {
         <p className="font-mono text-xs text-muted mt-1">Last synced 2 mins ago · 6 panels active</p>
       </div>
 
-      {/* KPI Cards */}
+      {/* KPI Cards — clickable */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <KPICard label="Outstanding" value={formatRM(kpis.outstanding)} valueClass="text-amber" trend="+RM 2,140 vs last month" />
-        <KPICard label="Avg days to pay" value={`${kpis.avgDays} days`} valueClass="text-ink" trend="MMA target: 30 days" />
-        <KPICard label="Unexplained deductions" value="RM 6,210" valueClass="text-danger" trend="6 appeals ready to send" />
-        <KPICard label="Active panels" value="6 TPAs" valueClass="text-primary" trend="Selcare: best · IHP: worst" />
+        <KPICard label="Outstanding" value={formatRM(kpis.outstanding)} valueClass="text-amber" trend="+RM 2,140 vs last month" onClick={() => navigate('/status')} />
+        <KPICard label="Avg days to pay" value={`${kpis.avgDays} days`} valueClass="text-ink" trend="MMA target: 30 days" onClick={() => navigate('/aggregate')} />
+        <KPICard label="Unexplained deductions" value="RM 6,210" valueClass="text-danger" trend="6 appeals ready to send" onClick={() => navigate('/reconcile')} />
+        <KPICard label="Active panels" value="6 TPAs" valueClass="text-primary" trend="Selcare: best · IHP: worst" onClick={() => navigate('/settings/connectors')} />
       </div>
 
       {/* CTA Banner */}
       <button
         onClick={() => navigate('/reconcile')}
-        className="w-full bg-primary text-background rounded-lg px-6 py-4 flex items-center justify-between hover:bg-primary-deep transition-colors"
+        className="w-full bg-primary text-white rounded-lg px-6 py-4 flex items-center justify-between hover:bg-primary-deep transition-colors"
         type="button"
       >
         <span className="flex items-center gap-3">
@@ -92,7 +91,7 @@ export function Dashboard() {
       </button>
 
       {/* Ageing Chart */}
-      <section className="bg-surface/60 rounded-lg border border-border p-6">
+      <section className="bg-surface rounded-lg border border-border p-6">
         <h3 className="font-display text-lg text-ink mb-4">Outstanding by panel</h3>
         <div className="space-y-3">
           {ageing.map(({ payer, buckets, total }) => (
@@ -125,7 +124,7 @@ export function Dashboard() {
       </section>
 
       {/* Top 5 Oldest Claims */}
-      <section className="bg-surface/60 rounded-lg border border-border p-6">
+      <section className="bg-surface rounded-lg border border-border p-6">
         <h3 className="font-display text-lg text-ink mb-4">Top 5 oldest claims</h3>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -145,15 +144,16 @@ export function Dashboard() {
                 const patient = PATIENTS.find((p) => p.id === claim.patientId);
                 const payer = PAYERS.find((p) => p.id === claim.payerId);
                 return (
-                  <tr key={claim.id} className="border-b border-border/50 hover:bg-primary-soft/20 cursor-pointer">
+                  <tr
+                    key={claim.id}
+                    className="border-b border-border/50 hover:bg-primary-soft/30 cursor-pointer transition-colors"
+                    onClick={() => navigate('/status')}
+                  >
                     <td className="py-2 px-2 font-mono text-xs">{claim.claimNo}</td>
                     <td className="py-2 px-2 text-body">{patient?.fullName ?? '—'}</td>
                     <td className="py-2 px-2 font-mono text-xs text-muted">{formatDateMY(claim.serviceDate)}</td>
                     <td className="py-2 px-2">
-                      <span className="flex items-center gap-1.5">
-                        <span className={`w-2 h-2 rounded-full bg-${payer?.accentColor ?? 'muted'}`} />
-                        <span className="text-body text-xs">{payer?.shortCode}</span>
-                      </span>
+                      <span className="font-mono text-xs text-body">{payer?.shortCode}</span>
                     </td>
                     <td className="py-2 px-2">
                       <span className="inline-flex items-center gap-1 text-xs text-muted">
@@ -176,12 +176,18 @@ export function Dashboard() {
   );
 }
 
-function KPICard({ label, value, valueClass, trend }: { label: string; value: string; valueClass: string; trend: string }) {
+function KPICard({ label, value, valueClass, trend, onClick }: {
+  label: string; value: string; valueClass: string; trend: string; onClick?: () => void;
+}) {
   return (
-    <div className="bg-surface border border-border rounded-lg p-5">
+    <button
+      onClick={onClick}
+      className="bg-surface border border-border rounded-lg p-5 text-left hover:border-primary/30 hover:shadow-sm transition-all group"
+      type="button"
+    >
       <p className="font-mono text-xs uppercase tracking-wide text-muted">{label}</p>
-      <p className={`font-display text-3xl tabular-nums mt-1 ${valueClass}`}>{value}</p>
-      <p className="text-xs text-muted mt-1">{trend}</p>
-    </div>
+      <p className={`font-display text-2xl md:text-3xl tabular-nums mt-1 ${valueClass}`}>{value}</p>
+      <p className="text-xs text-muted mt-1 group-hover:text-primary transition-colors">{trend}</p>
+    </button>
   );
 }

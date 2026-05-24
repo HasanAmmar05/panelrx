@@ -1,30 +1,31 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-background: #0a0e1a;
-  --color-surface: rgba(15, 23, 42, 0.6);
-  --color-surface-elevated: rgba(15, 23, 42, 0.9);
-  --color-surface-solid: #0f172a;
+  /* ─── Light Enterprise Theme (Linear / Notion inspired) ─── */
+  --color-background: #FAFBFC;
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: #F6F8FA;
+  --color-surface-solid: #FFFFFF;
 
-  --color-ink: #f8fafc;
-  --color-body: #94a3b8;
-  --color-muted: #64748b;
-  --color-faint: #475569;
+  --color-ink: #111827;
+  --color-body: #4B5563;
+  --color-muted: #9CA3AF;
+  --color-faint: #D1D5DB;
 
-  --color-primary: #14b8a6;
-  --color-primary-deep: #0f766e;
-  --color-primary-soft: rgba(20, 184, 166, 0.1);
-  --color-primary-ring: rgba(20, 184, 166, 0.25);
+  --color-primary: #0D9488;
+  --color-primary-deep: #0F766E;
+  --color-primary-soft: rgba(13, 148, 136, 0.08);
+  --color-primary-ring: rgba(13, 148, 136, 0.20);
 
-  --color-amber: #f59e0b;
-  --color-amber-soft: rgba(245, 158, 11, 0.1);
-  --color-danger: #ef4444;
-  --color-danger-soft: rgba(239, 68, 68, 0.1);
-  --color-positive: #10b981;
-  --color-positive-soft: rgba(16, 185, 129, 0.1);
+  --color-amber: #D97706;
+  --color-amber-soft: rgba(217, 119, 6, 0.08);
+  --color-danger: #DC2626;
+  --color-danger-soft: rgba(220, 38, 38, 0.08);
+  --color-positive: #059669;
+  --color-positive-soft: rgba(5, 150, 105, 0.08);
 
-  --color-border: rgba(255, 255, 255, 0.08);
-  --color-border-strong: rgba(255, 255, 255, 0.15);
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-strong: rgba(0, 0, 0, 0.15);
 
   --font-display: 'Geist', system-ui, sans-serif;
   --font-sans: 'Inter', system-ui, sans-serif;
@@ -50,6 +51,30 @@
 
   * {
     box-sizing: border-box;
+  }
+
+  /* ─── Cinematic dark mode override ─── */
+  .cinematic-dark {
+    --color-background: #0a0e1a;
+    --color-surface: rgba(15, 23, 42, 0.6);
+    --color-surface-elevated: rgba(15, 23, 42, 0.9);
+    --color-surface-solid: #0f172a;
+    --color-ink: #f8fafc;
+    --color-body: #94a3b8;
+    --color-muted: #64748b;
+    --color-faint: #475569;
+    --color-primary: #14b8a6;
+    --color-primary-deep: #0f766e;
+    --color-primary-soft: rgba(20, 184, 166, 0.1);
+    --color-primary-ring: rgba(20, 184, 166, 0.25);
+    --color-amber: #f59e0b;
+    --color-amber-soft: rgba(245, 158, 11, 0.1);
+    --color-danger: #ef4444;
+    --color-danger-soft: rgba(239, 68, 68, 0.1);
+    --color-positive: #10b981;
+    --color-positive-soft: rgba(16, 185, 129, 0.1);
+    --color-border: rgba(255, 255, 255, 0.08);
+    --color-border-strong: rgba(255, 255, 255, 0.15);
   }
 }
 

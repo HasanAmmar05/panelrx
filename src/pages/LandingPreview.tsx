@@ -73,7 +73,7 @@ export function LandingPreview() {
         </div>
 
         {/* Content area */}
-        <div className="relative p-3 h-80 overflow-hidden bg-background">
+        <div className="cinematic-dark relative p-3 h-80 overflow-hidden bg-background">
           <AnimatePresence mode="wait">
             {phase === 'files' && (
               <motion.div

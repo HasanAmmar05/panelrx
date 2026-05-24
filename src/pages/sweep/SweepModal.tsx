@@ -184,13 +184,16 @@ export function SweepModal({ claims, responses, onComplete, onClose }: SweepModa
       if (idx >= callDialogue.length) {
         // Call ended sound
         playHangupTone();
-        // Call done — add response step to log
-        const respText = resp?.response ?? 'No update.';
-        setVisibleSteps((prev) => [...prev, { agent: 'StatusAgent', action: `TPA responded: ${(resp?.outcome ?? 'pending').toUpperCase()}`, detail: respText, type: 'response', done: true, durationMs: 0 }]);
-        setIsInVoiceCall(false);
-        // Mark voice_call step as done
-        setVisibleSteps((prev) => prev.map((s) => s.type === 'voice_call' ? { ...s, done: true } : s));
-        setStepIdx((i) => i + 1);
+        // Wait 3 seconds to keep the call screen visible before proceeding
+        setTimeout(() => {
+          // Call done — add response step to log
+          const respText = resp?.response ?? 'No update.';
+          setVisibleSteps((prev) => [...prev, { agent: 'StatusAgent', action: `TPA responded: ${(resp?.outcome ?? 'pending').toUpperCase()}`, detail: respText, type: 'response', done: true, durationMs: 0 }]);
+          setIsInVoiceCall(false);
+          // Mark voice_call step as done
+          setVisibleSteps((prev) => prev.map((s) => s.type === 'voice_call' ? { ...s, done: true } : s));
+          setStepIdx((i) => i + 1);
+        }, 3000);
         return;
       }
 
@@ -267,12 +270,14 @@ export function SweepModal({ claims, responses, onComplete, onClose }: SweepModa
 
       if (claimIdx + 1 >= claims.length) {
         setIsFinished(true);
+        playSuccessChime();
+        // Keep the completed screen open for 5.5 seconds (stale for 2-3 extra seconds)
         setTimeout(() => {
-          playSuccessChime();
           onComplete([...completedClaims, result]);
-        }, 2500);
+        }, 5500);
       } else {
-        setTimeout(() => { setClaimIdx((i) => i + 1); setStepIdx(-1); }, 1500);
+        // Wait 3.5 seconds (slower flow) before starting the next claim
+        setTimeout(() => { setClaimIdx((i) => i + 1); setStepIdx(-1); }, 3500);
       }
       return;
     }

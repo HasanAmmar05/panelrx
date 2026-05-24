@@ -10,7 +10,7 @@ export const STAGES: Stage[] = [
   {
     id: 2,
     name: 'Eligibility Check',
-    durationMs: 10000,
+    durationMs: 12000,
     description: 'AI agents check 3 insurance panels simultaneously in 6.8 seconds.',
   },
   {
@@ -22,31 +22,31 @@ export const STAGES: Stage[] = [
   {
     id: 4,
     name: 'Claim Submission',
-    durationMs: 10000,
+    durationMs: 12000,
     description: 'AI auto-creates and submits claim to all eligible TPAs. Zero data entry.',
   },
   {
     id: 5,
     name: 'Autonomous Monitoring',
-    durationMs: 6000,
+    durationMs: 9000,
     description: 'Agents monitor, follow up, and escalate over 62 days. Doctor does nothing.',
   },
   {
     id: 6,
     name: 'Payment Reconciliation',
-    durationMs: 18000,
+    durationMs: 20000,
     description: '5 AI agents reconcile remittance, find RM 6,210 in unexplained deductions.',
   },
   {
     id: 7,
     name: 'Revenue Recovery',
-    durationMs: 8000,
+    durationMs: 10000,
     description: 'Dr. Vani recovers money that would have been lost. 40% of monthly income.',
   },
   {
     id: 8,
     name: 'Scale to 1,000 Clinics',
-    durationMs: 6000,
+    durationMs: 9000,
     description: 'RM 6.2 million recovered monthly across all clinics nationwide.',
   },
   {
@@ -150,7 +150,7 @@ export const STAGE_CONTENT = {
   stage5: {
     fromDate: '2026-02-14',
     toDate: '2026-04-17',
-    sweepDurationMs: 6000,
+    sweepDurationMs: 5000,
     events: [
       { atProgress: 0.10, label: "Day 14 · MiCare moves claim to 'in review'" },
       { atProgress: 0.22, label: 'Day 27 · MediExpress requests additional documentation' },

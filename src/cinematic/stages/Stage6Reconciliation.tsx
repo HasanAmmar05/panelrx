@@ -53,7 +53,7 @@ function getSubPhase(ms: number): SubPhase {
   if (ms < 11500) return 'agent-3';
   if (ms < 13500) return 'agent-4';
   if (ms < 15000) return 'agent-5';
-  if (ms < 17000) return 'money-shot';
+  if (ms < 16500) return 'money-shot';
   return 'closing';
 }
 
@@ -72,7 +72,7 @@ export function Stage6Reconciliation({ elapsedMs }: Stage6ReconciliationProps) {
   const showPipelineLabel = elapsedMs >= 2500 && elapsedMs < 3000;
   const showAgents = elapsedMs >= 3000;
   const showResults = elapsedMs >= 15000;
-  const showClosing = elapsedMs >= 17000;
+  const showClosing = elapsedMs >= 16500;
 
   // Active agents for StatusBar
   const activeAgentNames: string[] = [];

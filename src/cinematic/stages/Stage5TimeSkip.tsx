@@ -27,7 +27,7 @@ export function Stage5TimeSkip({ elapsedMs }: Stage5TimeSkipProps) {
   const c = STAGE_CONTENT.stage5;
   const showOverlay = true;
   const showClock = elapsedMs >= 500;
-  const showClosing = elapsedMs >= 5000;
+  const showClosing = elapsedMs >= 5500;
 
   const sweepProgress = showClock
     ? Math.min((elapsedMs - 500) / c.sweepDurationMs, 1)

@@ -115,3 +115,35 @@ export type EligibilityResult = {
   notes?: string;
   latencyMs: number;
 };
+
+// ─── Autonomous Batch Status Checking ───
+export type CheckOutcome =
+  | 'pending'            // TPA says still processing
+  | 'promised_date'      // TPA gives a payment date → snooze until then
+  | 'queried'            // TPA asks for more docs
+  | 'approved'           // TPA approved, payment incoming
+  | 'rejected'           // TPA rejected
+  | 'paid'               // Money arrived
+  | 'no_response';       // Portal down or timeout
+
+export type ClaimCheckEntry = {
+  id: string;
+  claimId: string;
+  claimNo: string;
+  patientName: string;
+  payerId: string;
+  tpaName: string;
+  grossAmountRm: number;
+  daysOutstanding: number;
+  // Check history
+  lastCheckedAt: string | null;
+  lastOutcome: CheckOutcome | null;
+  lastResponse: string | null;
+  // Cooldown logic
+  snoozedUntil: string | null;   // don't check before this date
+  cooldownDays: number;           // how many days to wait
+  checkCount: number;             // how many times we've checked
+  // Queue state
+  queueStatus: 'ready' | 'snoozed' | 'checking' | 'resolved';
+};
+

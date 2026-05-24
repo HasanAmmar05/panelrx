@@ -9,6 +9,7 @@ import { Status } from './pages/Status';
 import { Reconcile } from './pages/Reconcile';
 import { Aggregate } from './pages/Aggregate';
 import { Connectors } from './pages/Connectors';
+import { AutoSweep } from './pages/AutoSweep';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
       <Route path="/reconcile" element={<ProductShell><Reconcile /></ProductShell>} />
       <Route path="/aggregate" element={<ProductShell><Aggregate /></ProductShell>} />
       <Route path="/settings/connectors" element={<ProductShell><Connectors /></ProductShell>} />
+      <Route path="/auto-sweep" element={<ProductShell><AutoSweep /></ProductShell>} />
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

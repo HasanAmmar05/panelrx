@@ -195,3 +195,47 @@ export function getEligibilityResults(ic: string): EligibilityCheckResult[] {
   ];
 }
 
+// ─── Autonomous Batch Status Check Queue ───
+import type { ClaimCheckEntry } from './types';
+
+export const CLAIM_CHECK_QUEUE: ClaimCheckEntry[] = [
+  // READY — need to check now (never checked or cooldown expired)
+  { id: 'chk_01', claimId: 'clm_012', claimNo: 'PRX-2026-10012', patientName: 'Aisyah Rahman', payerId: 'p_mediexp', tpaName: 'MediExpress', grossAmountRm: 85, daysOutstanding: 72, lastCheckedAt: null, lastOutcome: null, lastResponse: null, snoozedUntil: null, cooldownDays: 0, checkCount: 0, queueStatus: 'ready' },
+  { id: 'chk_02', claimId: 'clm_018', claimNo: 'PRX-2026-10018', patientName: 'Lim Wei Jian', payerId: 'p_ihp', tpaName: 'IHP', grossAmountRm: 120, daysOutstanding: 94, lastCheckedAt: null, lastOutcome: null, lastResponse: null, snoozedUntil: null, cooldownDays: 0, checkCount: 0, queueStatus: 'ready' },
+  { id: 'chk_03', claimId: 'clm_025', claimNo: 'PRX-2026-10025', patientName: 'Muhammad Faiz Aziz', payerId: 'p_micare', tpaName: 'MiCare', grossAmountRm: 65, daysOutstanding: 45, lastCheckedAt: null, lastOutcome: null, lastResponse: null, snoozedUntil: null, cooldownDays: 0, checkCount: 0, queueStatus: 'ready' },
+  { id: 'chk_04', claimId: 'clm_031', claimNo: 'PRX-2026-10031', patientName: 'Priya Sundaram', payerId: 'p_pmcare', tpaName: 'PMCare', grossAmountRm: 95, daysOutstanding: 38, lastCheckedAt: null, lastOutcome: null, lastResponse: null, snoozedUntil: null, cooldownDays: 0, checkCount: 0, queueStatus: 'ready' },
+  { id: 'chk_05', claimId: 'clm_037', claimNo: 'PRX-2026-10037', patientName: 'Tan Mei Ling', payerId: 'p_mediexp', tpaName: 'MediExpress', grossAmountRm: 110, daysOutstanding: 61, lastCheckedAt: null, lastOutcome: null, lastResponse: null, snoozedUntil: null, cooldownDays: 0, checkCount: 0, queueStatus: 'ready' },
+  { id: 'chk_06', claimId: 'clm_042', claimNo: 'PRX-2026-10042', patientName: 'Nurul Huda Ismail', payerId: 'p_ihp', tpaName: 'IHP', grossAmountRm: 78, daysOutstanding: 88, lastCheckedAt: null, lastOutcome: null, lastResponse: null, snoozedUntil: null, cooldownDays: 0, checkCount: 0, queueStatus: 'ready' },
+  { id: 'chk_07', claimId: 'clm_048', claimNo: 'PRX-2026-10048', patientName: 'Wong Chee Kong', payerId: 'p_selcare', tpaName: 'SelCare', grossAmountRm: 55, daysOutstanding: 33, lastCheckedAt: null, lastOutcome: null, lastResponse: null, snoozedUntil: null, cooldownDays: 0, checkCount: 0, queueStatus: 'ready' },
+  { id: 'chk_08', claimId: 'clm_053', claimNo: 'PRX-2026-10053', patientName: 'Ramesh Kumar', payerId: 'p_micare', tpaName: 'MiCare', grossAmountRm: 140, daysOutstanding: 52, lastCheckedAt: null, lastOutcome: null, lastResponse: null, snoozedUntil: null, cooldownDays: 0, checkCount: 0, queueStatus: 'ready' },
+
+  // SNOOZED — TPA gave a promise date, agent is waiting smartly
+  { id: 'chk_09', claimId: 'clm_003', claimNo: 'PRX-2026-10003', patientName: 'Encik Faizal Rahman', payerId: 'p_micare', tpaName: 'MiCare', grossAmountRm: 65, daysOutstanding: 58, lastCheckedAt: '2026-05-17T09:14:00Z', lastOutcome: 'promised_date', lastResponse: 'Payment scheduled in batch cycle April 18. Ref: MC-BATCH-2026-04-18.', snoozedUntil: '2026-05-25', cooldownDays: 7, checkCount: 2, queueStatus: 'snoozed' },
+  { id: 'chk_10', claimId: 'clm_007', claimNo: 'PRX-2026-10007', patientName: 'Kumaresan Velu', payerId: 'p_ihp', tpaName: 'IHP', grossAmountRm: 95, daysOutstanding: 85, lastCheckedAt: '2026-05-15T10:30:00Z', lastOutcome: 'promised_date', lastResponse: 'Approved. Payment in next cycle (est. 10 working days).', snoozedUntil: '2026-05-29', cooldownDays: 14, checkCount: 4, queueStatus: 'snoozed' },
+  { id: 'chk_11', claimId: 'clm_015', claimNo: 'PRX-2026-10015', patientName: 'Lee Hui Min', payerId: 'p_pmcare', tpaName: 'PMCare', grossAmountRm: 72, daysOutstanding: 42, lastCheckedAt: '2026-05-20T08:45:00Z', lastOutcome: 'promised_date', lastResponse: 'Claim approved. Payment scheduled for May 28.', snoozedUntil: '2026-05-28', cooldownDays: 7, checkCount: 1, queueStatus: 'snoozed' },
+  { id: 'chk_12', claimId: 'clm_022', claimNo: 'PRX-2026-10022', patientName: 'Ahmad Daniel Hakimi', payerId: 'p_mediexp', tpaName: 'MediExpress', grossAmountRm: 88, daysOutstanding: 67, lastCheckedAt: '2026-05-18T14:20:00Z', lastOutcome: 'pending', lastResponse: 'Status: in review. No further update available.', snoozedUntil: '2026-05-25', cooldownDays: 7, checkCount: 3, queueStatus: 'snoozed' },
+  { id: 'chk_13', claimId: 'clm_029', claimNo: 'PRX-2026-10029', patientName: 'Devi Lakshmi', payerId: 'p_selcare', tpaName: 'SelCare', grossAmountRm: 45, daysOutstanding: 28, lastCheckedAt: '2026-05-22T09:00:00Z', lastOutcome: 'promised_date', lastResponse: 'Payment being processed. ETA: 3 working days.', snoozedUntil: '2026-05-27', cooldownDays: 5, checkCount: 1, queueStatus: 'snoozed' },
+  { id: 'chk_14', claimId: 'clm_035', claimNo: 'PRX-2026-10035', patientName: 'Chen Yi Hao', payerId: 'p_micare', tpaName: 'MiCare', grossAmountRm: 105, daysOutstanding: 55, lastCheckedAt: '2026-05-19T11:15:00Z', lastOutcome: 'promised_date', lastResponse: 'Batch processing. Expected deposit May 30.', snoozedUntil: '2026-06-01', cooldownDays: 12, checkCount: 2, queueStatus: 'snoozed' },
+
+  // RESOLVED — money came or claim closed
+  { id: 'chk_15', claimId: 'clm_005', claimNo: 'PRX-2026-10005', patientName: 'Siti Khadijah Aziz', payerId: 'p_selcare', tpaName: 'SelCare', grossAmountRm: 55, daysOutstanding: 0, lastCheckedAt: '2026-05-20T09:30:00Z', lastOutcome: 'paid', lastResponse: 'Payment received RM 55.00 via bank transfer. Ref: SEL-PAY-2026-05-20-001.', snoozedUntil: null, cooldownDays: 0, checkCount: 2, queueStatus: 'resolved' },
+  { id: 'chk_16', claimId: 'clm_009', claimNo: 'PRX-2026-10009', patientName: 'Mohd Iqbal Hassan', payerId: 'p_pmcare', tpaName: 'PMCare', grossAmountRm: 68, daysOutstanding: 0, lastCheckedAt: '2026-05-21T10:00:00Z', lastOutcome: 'paid', lastResponse: 'Payment received RM 68.00. Matched to remittance PMC-REM-26-05-21.', snoozedUntil: null, cooldownDays: 0, checkCount: 3, queueStatus: 'resolved' },
+  { id: 'chk_17', claimId: 'clm_014', claimNo: 'PRX-2026-10014', patientName: 'Fatimah Mohd Yusof', payerId: 'p_micare', tpaName: 'MiCare', grossAmountRm: 75, daysOutstanding: 0, lastCheckedAt: '2026-05-19T14:00:00Z', lastOutcome: 'paid', lastResponse: 'Payment received RM 71.25 (5% admin fee deducted). Auto-flagged for reconciliation.', snoozedUntil: null, cooldownDays: 0, checkCount: 1, queueStatus: 'resolved' },
+  { id: 'chk_18', claimId: 'clm_020', claimNo: 'PRX-2026-10020', patientName: 'Selvam Krishnan', payerId: 'p_mediexp', tpaName: 'MediExpress', grossAmountRm: 92, daysOutstanding: 0, lastCheckedAt: '2026-05-22T11:30:00Z', lastOutcome: 'paid', lastResponse: 'Payment received RM 84.64 (8% admin fee). Variance auto-logged.', snoozedUntil: null, cooldownDays: 0, checkCount: 4, queueStatus: 'resolved' },
+
+  // QUERIED — TPA needs something from the clinic
+  { id: 'chk_19', claimId: 'clm_041', claimNo: 'PRX-2026-10041', patientName: 'Aishwarya Pillai', payerId: 'p_ihp', tpaName: 'IHP', grossAmountRm: 135, daysOutstanding: 76, lastCheckedAt: '2026-05-21T09:00:00Z', lastOutcome: 'queried', lastResponse: 'Additional documentation required: lab report for blood test claimed. Upload deadline: May 28.', snoozedUntil: null, cooldownDays: 0, checkCount: 2, queueStatus: 'ready' },
+  { id: 'chk_20', claimId: 'clm_047', claimNo: 'PRX-2026-10047', patientName: 'Yap Siew Lin', payerId: 'p_mediexp', tpaName: 'MediExpress', grossAmountRm: 160, daysOutstanding: 53, lastCheckedAt: '2026-05-22T08:30:00Z', lastOutcome: 'queried', lastResponse: 'Diagnosis code J06.9 does not match X-ray claim. Please clarify or amend.', snoozedUntil: null, cooldownDays: 0, checkCount: 1, queueStatus: 'ready' },
+];
+
+// Fake responses for the live sweep simulation
+export const SWEEP_RESPONSES: Record<string, { outcome: string; response: string; cooldownDays: number }> = {
+  'chk_01': { outcome: 'promised_date', response: 'Payment approved. Next batch cycle: May 31. Ref: ME-BATCH-2026-05-31.', cooldownDays: 7 },
+  'chk_02': { outcome: 'pending', response: 'Status: under review. No update from claims department.', cooldownDays: 7 },
+  'chk_03': { outcome: 'promised_date', response: 'Approved. Payment scheduled for May 28. Ref: MC-PAY-2026-05-28.', cooldownDays: 4 },
+  'chk_04': { outcome: 'approved', response: 'Claim approved RM 95.00. Payment in next cycle (est. 5 working days).', cooldownDays: 7 },
+  'chk_05': { outcome: 'pending', response: 'In review. Estimated processing: 10 working days.', cooldownDays: 14 },
+  'chk_06': { outcome: 'no_response', response: 'IHP portal timeout after 30s. Will retry in next sweep.', cooldownDays: 1 },
+  'chk_07': { outcome: 'promised_date', response: 'Payment processed. Bank transfer initiated. ETA: 2 working days.', cooldownDays: 3 },
+  'chk_08': { outcome: 'promised_date', response: 'Batch payment approved. Deposit expected May 30. Ref: MC-BATCH-2026-05-30.', cooldownDays: 6 },
+};

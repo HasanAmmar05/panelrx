@@ -5,6 +5,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/eligibility': 'Eligibility Check',
   '/submit': 'Submit Claim',
   '/status': 'Claim Status',
+  '/auto-sweep': 'Auto Sweep',
   '/reconcile': 'Reconcile',
   '/aggregate': 'MMA Aggregate',
   '/settings/connectors': 'TPA Connectors',

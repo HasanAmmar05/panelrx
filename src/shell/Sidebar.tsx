@@ -10,6 +10,7 @@ import {
   Settings,
   Menu,
   X,
+  Radar,
 } from 'lucide-react';
 
 const NAV_ITEMS = [
@@ -17,6 +18,7 @@ const NAV_ITEMS = [
   { to: '/eligibility', icon: FileCheck, label: 'Eligibility' },
   { to: '/submit', icon: Send, label: 'Submit claim' },
   { to: '/status', icon: Clock, label: 'Status' },
+  { to: '/auto-sweep', icon: Radar, label: 'Auto Sweep' },
   { to: '/reconcile', icon: Upload, label: 'Reconcile' },
   { to: '/aggregate', icon: Globe, label: 'Aggregate' },
   { to: '/settings/connectors', icon: Settings, label: 'Connectors' },

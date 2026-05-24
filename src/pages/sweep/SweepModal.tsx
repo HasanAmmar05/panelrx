@@ -6,6 +6,9 @@ import {
   Shield, FileText, MessageSquare, Zap, Mic, Volume2
 } from 'lucide-react';
 import type { ClaimCheckEntry } from '../../data/types';
+import { playDialTone, playRingTone, playDTMF, playConnectChime, playHangupTone, playKeyClick, playSuccessChime, playHoldBeep, playAlertBeep } from '../../lib/sounds';
+
+const DTMF_KEYS = '0123456789*#';
 
 // ─── Per-TPA Access Methods ───
 const TPA_ACCESS: Record<string, { method: 'hotline' | 'portal' | 'api' | 'app'; url: string; icon: typeof Phone }> = {
@@ -179,6 +182,8 @@ export function SweepModal({ claims, responses, onComplete, onClose }: SweepModa
     let idx = 0;
     const showNext = () => {
       if (idx >= callDialogue.length) {
+        // Call ended sound
+        playHangupTone();
         // Call done — add response step to log
         const respText = resp?.response ?? 'No update.';
         setVisibleSteps((prev) => [...prev, { agent: 'StatusAgent', action: `TPA responded: ${(resp?.outcome ?? 'pending').toUpperCase()}`, detail: respText, type: 'response', done: true, durationMs: 0 }]);
@@ -188,8 +193,52 @@ export function SweepModal({ claims, responses, onComplete, onClose }: SweepModa
         setStepIdx((i) => i + 1);
         return;
       }
-      setVisibleDialogue((prev) => [...prev, callDialogue[idx]]);
-      const timer = setTimeout(() => { idx++; showNext(); }, callDialogue[idx].durationMs);
+
+      const line = callDialogue[idx];
+      setVisibleDialogue((prev) => [...prev, line]);
+
+      // Sound effects based on dialogue content
+      if (line.speaker === 'system') {
+        if (line.text.includes('Connecting')) {
+          playDialTone(1200);
+          setTimeout(playRingTone, 1300);
+        } else if (line.text.includes('Welcome to')) {
+          playConnectChime();
+        } else if (line.text.includes('Hold music') || line.text.includes('hold')) {
+          playHoldBeep();
+        } else if (line.text.includes('Call ended')) {
+          // hangup handled above
+        } else if (line.text.includes('press') || line.text.includes('Press')) {
+          // IVR menu beep
+          playHoldBeep();
+        }
+      } else if (line.speaker === 'agent') {
+        if (line.text.includes('Pressing 1')) {
+          setTimeout(() => playDTMF('1', 200), 300);
+        } else if (line.text.includes('Pressing 2')) {
+          setTimeout(() => playDTMF('2', 200), 300);
+        } else if (line.text.includes('Pressing 3')) {
+          setTimeout(() => playDTMF('3', 200), 300);
+        } else if (line.text.includes('Entering:')) {
+          // Type out provider number with key clicks
+          const chars = 'PMK-1234-WP#';
+          chars.split('').forEach((ch, ci) => {
+            setTimeout(() => {
+              if (DTMF_KEYS.includes(ch)) playDTMF(ch, 80);
+              else playKeyClick();
+            }, 60 * ci + 200);
+          });
+        } else {
+          // Agent speaking — subtle key click
+          playKeyClick();
+        }
+      } else if (line.speaker === 'operator') {
+        if (line.text.includes('Hello')) {
+          playConnectChime();
+        }
+      }
+
+      const timer = setTimeout(() => { idx++; showNext(); }, line.durationMs);
       return () => clearTimeout(timer);
     };
     const t = setTimeout(showNext, 500);
@@ -218,7 +267,10 @@ export function SweepModal({ claims, responses, onComplete, onClose }: SweepModa
 
       if (claimIdx + 1 >= claims.length) {
         setIsFinished(true);
-        setTimeout(() => onComplete([...completedClaims, result]), 2500);
+        setTimeout(() => {
+          playSuccessChime();
+          onComplete([...completedClaims, result]);
+        }, 2500);
       } else {
         setTimeout(() => { setClaimIdx((i) => i + 1); setStepIdx(-1); }, 1500);
       }

@@ -94,6 +94,7 @@ export function Engine() {
   const [state, dispatch] = useReducer(engineReducer, initialState);
   const [speedIdx, setSpeedIdx] = useState(1); // default 0.5x (index 1)
   const speed = SPEED_PRESETS[speedIdx];
+  const [lightTheme, setLightTheme] = useState(false);
 
   const cycleSpeed = useCallback(() => {
     setSpeedIdx((i) => (i + 1) % SPEED_PRESETS.length);
@@ -140,7 +141,7 @@ export function Engine() {
   }, [state.isPlaying]);
 
   return (
-    <div className="cinematic-dark relative min-h-screen bg-background text-ink overflow-hidden select-none">
+    <div className={`${lightTheme ? '' : 'cinematic-dark'} relative min-h-screen bg-background text-ink overflow-hidden select-none`}>
       <StageIndicator
         currentStage={state.currentStage}
         elapsedInStage={state.elapsedInStage}
@@ -161,6 +162,8 @@ export function Engine() {
         hasEnded={state.hasEnded}
         speed={speed}
         speedPresets={SPEED_PRESETS as unknown as number[]}
+        lightTheme={lightTheme}
+        onToggleTheme={() => setLightTheme((v) => !v)}
         onTogglePlay={() => dispatch({ type: 'TOGGLE_PLAY' })}
         onNext={() => dispatch({ type: 'NEXT_STAGE' })}
         onPrev={() => dispatch({ type: 'PREV_STAGE' })}

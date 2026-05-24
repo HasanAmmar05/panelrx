@@ -6,6 +6,8 @@ import {
   SkipBack,
   SkipForward,
   Gauge,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import { STAGES, TOTAL_DURATION_MS } from './config';
 import type { StageId } from './types';
@@ -17,6 +19,8 @@ type ControlBarProps = {
   hasEnded: boolean;
   speed: number;
   speedPresets: number[];
+  lightTheme: boolean;
+  onToggleTheme: () => void;
   onTogglePlay: () => void;
   onNext: () => void;
   onPrev: () => void;
@@ -40,6 +44,8 @@ export function ControlBar({
   hasEnded,
   speed,
   speedPresets,
+  lightTheme,
+  onToggleTheme,
   onTogglePlay,
   onNext,
   onPrev,
@@ -114,6 +120,19 @@ export function ControlBar({
             ))}
           </div>
         </div>
+
+        <span className="block w-px h-5 bg-border-strong" aria-hidden />
+
+        {/* Theme toggle */}
+        <button
+          type="button"
+          aria-label={lightTheme ? 'Switch to dark theme' : 'Switch to light theme'}
+          className={`${btn} flex items-center gap-1`}
+          onClick={onToggleTheme}
+        >
+          {lightTheme ? <Moon size={16} /> : <Sun size={16} />}
+          <span className="font-mono text-[10px] hidden sm:inline">{lightTheme ? 'Dark' : 'Light'}</span>
+        </button>
 
         <span className="block w-px h-5 bg-border-strong" aria-hidden />
 

@@ -7,7 +7,7 @@ const PHASES = [800, 1000, 1200, 1000, 1000]; // idle → focus → type → cli
 export function PortalSim() {
   const phase = useLoopPhase(PHASES);
 
-  const typedText = '920101-10-1234';
+  const typedText = '920101-10-1233';
   const visibleChars =
     phase < 2 ? 0 : phase === 2 ? Math.floor(typedText.length * 0.7) : typedText.length;
 

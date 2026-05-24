@@ -7,7 +7,7 @@ const PHASES = [600, 800, 1000, 800, 800]; // idle → tap tab → type → sear
 export function AppSim() {
   const phase = useLoopPhase(PHASES);
 
-  const typedText = '920101-10-1234';
+  const typedText = '920101-10-1233';
   const visibleChars =
     phase < 2 ? 0 : phase === 2 ? Math.floor(typedText.length * 0.6) : typedText.length;
 

@@ -63,7 +63,7 @@ export const STAGE_CONTENT = {
   stage1: {
     bubbleText: 'Patient just walked in. Let me verify his coverage.',
     patientName: 'Encik Faizal Rahman · 34 male',
-    icNumber: '920101-10-1234',
+    icNumber: '920101-10-1233',
   },
   stage2: {
     bubbleText:
@@ -119,7 +119,7 @@ export const STAGE_CONTENT = {
     agentLabel: 'SubmissionAgent · broadcasting canonical claim to 2 eligible panels',
     claimLabel: 'ENCOUNTER DATA',
     claimLines: [
-      'Patient: Encik Faizal Rahman (920101-10-1234)',
+      'Patient: Encik Faizal Rahman (920101-10-1233)',
       'DX: J02.9 · Acute pharyngitis',
       'Rx: Paracetamol 500mg × 10, Amoxicillin 500mg × 15',
       'Consultation: RM 35.00',

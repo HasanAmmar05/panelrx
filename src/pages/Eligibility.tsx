@@ -1,16 +1,55 @@
 import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, CheckCircle, XCircle, Loader2, Shield } from 'lucide-react';
-import { getEligibilityResults, type EligibilityCheckResult } from '../data/seed';
+import { Search, CheckCircle, XCircle, Loader2, Shield, User } from 'lucide-react';
+import { getEligibilityResults, PATIENTS, type EligibilityCheckResult } from '../data/seed';
 import { formatRM } from '../lib/utils';
 
 type CheckState = 'idle' | 'checking' | 'done';
 
+/** Malaysian IC: last digit odd = male, even = female */
+function genderFromIc(ic: string): 'Male' | 'Female' | null {
+  const digits = ic.replace(/\D/g, '');
+  if (digits.length < 12) return null;
+  const last = parseInt(digits[digits.length - 1], 10);
+  return last % 2 === 1 ? 'Male' : 'Female';
+}
+
+/** Parse DOB from IC (first 6 digits = YYMMDD) */
+function dobFromIc(ic: string): string | null {
+  const digits = ic.replace(/\D/g, '');
+  if (digits.length < 6) return null;
+  const yy = parseInt(digits.slice(0, 2), 10);
+  const mm = digits.slice(2, 4);
+  const dd = digits.slice(4, 6);
+  const year = yy > 30 ? 1900 + yy : 2000 + yy;
+  return `${year}-${mm}-${dd}`;
+}
+
+/** Parse state code from IC (digits 7-8) */
+const STATE_CODES: Record<string, string> = {
+  '01': 'Johor', '02': 'Kedah', '03': 'Kelantan', '04': 'Melaka',
+  '05': 'Negeri Sembilan', '06': 'Pahang', '07': 'Pulau Pinang', '08': 'Perak',
+  '09': 'Perlis', '10': 'Selangor', '11': 'Terengganu', '12': 'Sabah',
+  '13': 'Sarawak', '14': 'W.P. Kuala Lumpur', '15': 'W.P. Labuan', '16': 'W.P. Putrajaya',
+};
+
+function stateFromIc(ic: string): string | null {
+  const digits = ic.replace(/\D/g, '');
+  if (digits.length < 8) return null;
+  const code = digits.slice(6, 8);
+  return STATE_CODES[code] ?? null;
+}
+
 export function Eligibility() {
-  const [ic, setIc] = useState('920101-10-1234');
+  const [ic, setIc] = useState('920101-10-1233');
   const [state, setState] = useState<CheckState>('idle');
   const [results, setResults] = useState<EligibilityCheckResult[]>([]);
   const [progress, setProgress] = useState(0);
+
+  const patient = PATIENTS.find((p) => p.icNumber === ic);
+  const gender = genderFromIc(ic);
+  const dob = dobFromIc(ic);
+  const birthState = stateFromIc(ic);
 
   const runCheck = useCallback(() => {
     if (!ic.trim()) return;
@@ -51,7 +90,7 @@ export function Eligibility() {
               type="text"
               value={ic}
               onChange={(e) => setIc(e.target.value)}
-              placeholder="Enter IC Number (e.g. 920101-10-1234)"
+              placeholder="Enter IC Number (e.g. 920101-10-1233)"
               className="w-full pl-9 pr-4 py-3 rounded-md bg-background border border-border text-ink font-mono focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary-ring transition-colors"
               onKeyDown={(e) => e.key === 'Enter' && runCheck()}
             />
@@ -75,6 +114,33 @@ export function Eligibility() {
             )}
           </button>
         </div>
+
+        {/* IC Decoded info */}
+        {ic.replace(/\D/g, '').length >= 12 && (
+          <div className="mt-3 flex flex-wrap items-center gap-3 text-xs">
+            {patient && (
+              <span className="text-positive font-mono flex items-center gap-1">
+                <User size={12} />
+                {patient.fullName}
+              </span>
+            )}
+            {gender && (
+              <span className="font-mono text-body px-2 py-0.5 rounded bg-surface-elevated border border-border">
+                {gender === 'Male' ? '♂' : '♀'} {gender}
+              </span>
+            )}
+            {dob && (
+              <span className="font-mono text-muted">
+                DOB: {new Date(dob).toLocaleDateString('en-MY', { day: 'numeric', month: 'short', year: 'numeric' })}
+              </span>
+            )}
+            {birthState && (
+              <span className="font-mono text-muted">
+                Birth: {birthState}
+              </span>
+            )}
+          </div>
+        )}
 
         {/* Progress bar */}
         {state === 'checking' && (
@@ -131,14 +197,14 @@ export function Eligibility() {
                     <div className="flex justify-between">
                       <span className="text-muted">Remaining limit</span>
                       <span className="font-display tabular-nums text-ink font-medium">
-                        {formatRM(r.remainingLimitRm!)}
+                        {formatRM(r.remainingLimitRm ?? 0)}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted">Visit cap</span>
-                      <span className="font-mono text-body">{formatRM(r.visitCapRm!)}</span>
+                      <span className="font-mono text-body">{formatRM(r.visitCapRm ?? 0)}</span>
                     </div>
-                    {r.copayRm! > 0 && (
+                    {(r.copayRm ?? 0) > 0 && (
                       <div className="flex justify-between">
                         <span className="text-muted">Co-pay</span>
                         <span className="font-mono text-amber">{formatRM(r.copayRm!)}</span>
@@ -162,24 +228,32 @@ export function Eligibility() {
       </AnimatePresence>
 
       {/* Summary */}
-      {state === 'done' && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="bg-positive-soft border border-positive/20 rounded-lg p-4 flex items-center gap-3"
-        >
-          <CheckCircle size={20} className="text-positive shrink-0" />
-          <div>
-            <p className="text-sm text-ink font-medium">
-              {results.filter((r) => r.status === 'active').length} active panels found for IC {ic}
-            </p>
-            <p className="text-xs text-body mt-0.5">
-              Highest limit: {formatRM(Math.max(...results.filter((r) => r.status === 'active').map((r) => r.remainingLimitRm ?? 0)))} ·
-              Ready to proceed to claim submission
-            </p>
-          </div>
-        </motion.div>
-      )}
+      {state === 'done' && (() => {
+        const activeResults = results.filter((r) => r.status === 'active');
+        const highestLimit = activeResults.length > 0
+          ? Math.max(...activeResults.map((r) => r.remainingLimitRm ?? 0))
+          : 0;
+        return (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-positive-soft border border-positive/20 rounded-lg p-4 flex items-center gap-3"
+          >
+            <CheckCircle size={20} className="text-positive shrink-0" />
+            <div>
+              <p className="text-sm text-ink font-medium">
+                {activeResults.length} active panels found for IC {ic}
+                {gender ? ` · ${gender}` : ''}
+              </p>
+              <p className="text-xs text-body mt-0.5">
+                {activeResults.length > 0
+                  ? `Highest limit: ${formatRM(highestLimit)} · Ready to proceed to claim submission`
+                  : 'No active coverage found. Patient may need to pay out-of-pocket.'}
+              </p>
+            </div>
+          </motion.div>
+        );
+      })()}
     </div>
   );
 }

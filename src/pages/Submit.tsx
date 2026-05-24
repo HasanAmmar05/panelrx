@@ -1,8 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, CheckCircle, Loader2, Plus, Trash2, AlertTriangle, Shield, Bot, Globe, Phone, Monitor, Smartphone, FileCheck, Clock } from 'lucide-react';
+import { Send, CheckCircle, Loader2, Plus, Trash2, AlertTriangle, Shield, Bot, Globe, Phone, Monitor, Smartphone, FileCheck, Clock, FileUp, User, X } from 'lucide-react';
 import { PATIENTS } from '../data/seed';
 import { PAYERS } from '../data/payers';
+
+/** Malaysian IC: last digit odd = male, even = female */
+function genderFromIc(ic: string): 'Male' | 'Female' | null {
+  const digits = ic.replace(/\D/g, '');
+  if (digits.length < 12) return null;
+  const last = parseInt(digits[digits.length - 1], 10);
+  return last % 2 === 1 ? 'Male' : 'Female';
+}
 
 type LineItem = { id: number; description: string; qty: number; unitPrice: number };
 type SubmitState = 'form' | 'submitting' | 'success';
@@ -47,7 +55,8 @@ const ICON_MAP = {
 
 export function Submit() {
   const [state, setState] = useState<SubmitState>('form');
-  const [ic, setIc] = useState('920101-10-1234');
+  const [ic, setIc] = useState('920101-10-1233');
+  const [uploadedFiles, setUploadedFiles] = useState<{ name: string; size: string; type: string }[]>([]);
   const [serviceDate, setServiceDate] = useState('2026-05-24');
   const [diagnosis, setDiagnosis] = useState('J06.9 \u2014 Acute URTI, unspecified');
   const [lineItems, setLineItems] = useState<LineItem[]>([
@@ -61,6 +70,31 @@ export function Submit() {
 
   const total = lineItems.reduce((s, li) => s + li.qty * li.unitPrice, 0);
   const patient = PATIENTS.find((p) => p.icNumber === ic);
+  const gender = genderFromIc(ic);
+
+  function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files;
+    if (!files) return;
+    const newFiles = Array.from(files).map((f) => ({
+      name: f.name,
+      size: f.size > 1024 * 1024 ? `${(f.size / (1024 * 1024)).toFixed(1)} MB` : `${Math.round(f.size / 1024)} KB`,
+      type: f.type || 'application/octet-stream',
+    }));
+    setUploadedFiles((prev) => [...prev, ...newFiles]);
+    // Simulate AI extraction from uploaded document
+    if (newFiles.some((f) => f.name.toLowerCase().includes('.pdf') || f.type.includes('pdf') || f.type.includes('text'))) {
+      // Auto-fill from uploaded document (simulated)
+      setTimeout(() => {
+        setDiagnosis('J02.9 \u2014 Acute pharyngitis');
+        setLineItems([
+          { id: 1, description: 'Consultation fee', qty: 1, unitPrice: 35 },
+          { id: 2, description: 'Amoxicillin 500mg (15 caps)', qty: 1, unitPrice: 18 },
+          { id: 3, description: 'Paracetamol 500mg (20 tabs)', qty: 1, unitPrice: 5 },
+          { id: 4, description: 'Throat swab (rapid antigen)', qty: 1, unitPrice: 25 },
+        ]);
+      }, 800);
+    }
+  }
 
   // Auto-scroll pipeline
   useEffect(() => {
@@ -131,7 +165,7 @@ export function Submit() {
                 <div>
                   <label className="font-mono text-xs text-muted uppercase tracking-wide block mb-1.5">Patient IC</label>
                   <input value={ic} onChange={(e) => setIc(e.target.value)} className="w-full px-3 py-2.5 rounded-md bg-background border border-border text-ink font-mono focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary-ring transition-colors" />
-                  {patient && <p className="text-xs text-positive mt-1 font-mono">Found: {patient.fullName}</p>}
+                  {patient && <p className="text-xs text-positive mt-1 font-mono">Found: {patient.fullName}{gender ? ` \u2022 ${gender === 'Male' ? '\u2642' : '\u2640'} ${gender}` : ''}</p>}
                 </div>
                 <div>
                   <label className="font-mono text-xs text-muted uppercase tracking-wide block mb-1.5">Service Date</label>
@@ -166,6 +200,36 @@ export function Submit() {
                 <div className="flex justify-end mt-2 pt-2 border-t border-border">
                   <span className="font-display text-lg tabular-nums text-ink">Total: RM {total.toFixed(2)}</span>
                 </div>
+              </div>
+
+              {/* Document Upload */}
+              <div>
+                <label className="font-mono text-xs text-muted uppercase tracking-wide block mb-1.5">Upload Documents (optional)</label>
+                <div className="border-2 border-dashed border-border rounded-md p-4 text-center hover:border-primary/40 transition-colors">
+                  <FileUp size={20} className="mx-auto text-muted mb-1" />
+                  <p className="text-xs text-body">Drop consultation notes, referral letters, or lab reports</p>
+                  <p className="text-[10px] text-muted mt-0.5">PDF, TXT, JPG — agent will auto-extract claim data</p>
+                  <label className="mt-2 inline-block cursor-pointer">
+                    <input type="file" multiple accept=".pdf,.txt,.jpg,.jpeg,.png" className="hidden" onChange={handleFileUpload} />
+                    <span className="text-xs text-primary hover:text-primary-deep font-medium transition-colors">Browse files</span>
+                  </label>
+                </div>
+                {uploadedFiles.length > 0 && (
+                  <div className="mt-2 space-y-1">
+                    {uploadedFiles.map((f, i) => (
+                      <div key={`${f.name}-${i}`} className="flex items-center justify-between bg-surface-elevated rounded px-3 py-1.5 text-xs">
+                        <span className="flex items-center gap-2 text-body">
+                          <FileCheck size={12} className="text-positive" />
+                          {f.name} <span className="text-muted">({f.size})</span>
+                        </span>
+                        <button onClick={() => setUploadedFiles((prev) => prev.filter((_, j) => j !== i))} className="text-muted hover:text-danger" type="button">
+                          <X size={12} />
+                        </button>
+                      </div>
+                    ))}
+                    <p className="text-[10px] text-positive font-mono mt-1">\u2713 AI auto-extracted claim data from uploaded documents</p>
+                  </div>
+                )}
               </div>
 
               <button onClick={submitClaim} className="bg-primary text-white hover:bg-primary-deep px-6 py-3 rounded-md font-medium transition-colors flex items-center gap-2" type="button">

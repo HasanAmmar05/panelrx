@@ -38,19 +38,18 @@ export function Reconcile() {
 
   function startPipeline() {
     dispatch({ type: 'START' });
-    let step = 0;
-    function advanceNext() {
-      if (step >= PIPELINE_STEPS.length) return;
+    let currentStep = 0;
+
+    function runStep() {
+      if (currentStep >= PIPELINE_STEPS.length) return;
+      const duration = PIPELINE_STEPS[currentStep].durationMs;
       setTimeout(() => {
         dispatch({ type: 'ADVANCE' });
-        step++;
-        advanceNext();
-      }, PIPELINE_STEPS[step].durationMs);
+        currentStep++;
+        runStep();
+      }, duration);
     }
-    setTimeout(() => {
-      step++;
-      advanceNext();
-    }, PIPELINE_STEPS[0].durationMs);
+    runStep();
   }
 
   return (

@@ -1,0 +1,82 @@
+═══════════════════════════════════════════════════════════════════
+  PANELRX — MASTER PROMPT FOR CLAUDE CODE
+  Copy everything between the dashed lines and paste into CC.
+═══════════════════════════════════════════════════════════════════
+
+----------- COPY FROM HERE -----------
+Read CLAUDE.md, then read .claude/prompts/start-phase.md.
+
+You are building PanelRx, the Lovable Vibeathon KL Track 3 submission. The full build is decomposed into 17 phases. I will tell you which phase to run.
+
+Operating rules:
+1. Before each phase, follow .claude/prompts/start-phase.md exactly.
+2. After each phase, update PHASE_STATUS.md and commit.
+3. Do not skip the smoke test.
+4. Do not modify previous phases' code unless the current brief requires it.
+5. Do not add npm dependencies without checking package.json first.
+6. Use the design system in .claude/design-system.md strictly — no purple, no glass-morphism, no rounded-2xl except ThoughtBubble.
+7. Keep files under 250 lines; split if larger.
+8. Always run `npx tsc --noEmit` before declaring done.
+
+When ready, tell me you've read the context and confirm you understand the protocol. Then I'll tell you which phase to execute first.
+----------- COPY TO HERE -----------
+
+
+═══════════════════════════════════════════════════════════════════
+  AFTER CC ACKNOWLEDGES — RUN PHASES IN ORDER
+═══════════════════════════════════════════════════════════════════
+
+Saturday night (pre-build):
+  Run Phase 1.
+  Run Phase 2.
+  Run Phase 8.
+  Run Phase 9.
+
+Sunday morning (cinematic):
+  Run Phase 3.
+  Run Phase 4.
+  Run Phase 5.    ← The crown jewel — give extra polish time
+  Run Phase 6.
+  Run Phase 7.
+
+Sunday afternoon (product pages):
+  Run Phase 10.   ← Second crown jewel — /reconcile with live Claude
+  Run Phase 11.
+  Run Phase 12.
+  Run Phase 13.
+  Run Phase 14.
+  Run Phase 15.
+  Run Phase 16.
+
+Sunday final (~3:40 PM):
+  Run Phase 17.   ← Polish + Lovable deploy
+
+3:50 PM: cold-load test on phone
+4:00 PM: SUBMIT VIA WHATSAPP
+
+
+═══════════════════════════════════════════════════════════════════
+  TROUBLESHOOTING COMMANDS
+═══════════════════════════════════════════════════════════════════
+
+If CC drifts:
+  Stop. Re-read CLAUDE.md and .claude/prompts/start-phase.md.
+
+If a phase is broken:
+  Verify Phase N.
+
+If something specific is wrong:
+  Debug: <specific symptom>. Use the debug-failure protocol.
+
+If you're out of time:
+  Time pressure. Skip Phase NN by replacing /route with a "Coming in pilot release" placeholder. Update PHASE_STATUS.md to SKIPPED.
+
+
+═══════════════════════════════════════════════════════════════════
+  PHASE DROP ORDER (if running >15 min behind at any checkpoint)
+═══════════════════════════════════════════════════════════════════
+
+First to drop:   Phase 16 (/settings/connectors)
+Second to drop:  Phase 15 (/submit)
+Third to drop:   Phase 14 (/eligibility)
+NEVER drop:      Phases 1-7, Phase 8, Phase 10, Phase 17

@@ -202,7 +202,6 @@ export function Engine() {
         onPrev={() => dispatch({ type: 'PREV_STAGE' })}
         onSkipToEnd={() => dispatch({ type: 'SKIP_TO_END' })}
         onReplay={() => dispatch({ type: 'REPLAY' })}
-        onCycleSpeed={cycleSpeed}
         onSetSpeed={setSpeed}
         onSeek={(deltaMs) => dispatch({ type: 'SEEK', deltaMs })}
       />

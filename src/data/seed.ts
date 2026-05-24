@@ -65,7 +65,7 @@ const STATUS_WEIGHTS: { status: ClaimStatus; weight: number }[] = [
   { status: 'approved_full', weight: 0.05 },
 ];
 
-function pickWeighted<T>(items: { weight: number }[], rand: number): number {
+function pickWeighted(items: { weight: number }[], rand: number): number {
   let acc = 0;
   for (let i = 0; i < items.length; i++) {
     acc += items[i].weight;

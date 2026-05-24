@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, LayoutDashboard, Sparkles } from 'lucide-react';
+import { LayoutDashboard, Sparkles } from 'lucide-react';
 
 type Stage9CTAProps = { elapsedMs: number };
 

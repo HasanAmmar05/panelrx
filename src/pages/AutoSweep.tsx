@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, CheckCircle, Clock, AlertTriangle, XCircle, Loader2, Timer, CalendarClock, RotateCcw } from 'lucide-react';
+import { Play, CheckCircle, Clock, AlertTriangle, XCircle, Timer, CalendarClock, RotateCcw } from 'lucide-react';
 import { CLAIM_CHECK_QUEUE, SWEEP_RESPONSES } from '../data/seed';
 import type { ClaimCheckEntry } from '../data/types';
 import { formatRM } from '../lib/utils';
@@ -47,7 +47,7 @@ export function AutoSweep() {
     // Add to sweep log
     const logEntries = results.map((r) => {
       const claim = queue.find((c) => c.id === r.id);
-      return { id: r.id, claimNo: claim?.claimNo ?? '', tpa: claim?.tpaName ?? '', ...r };
+      return { claimNo: claim?.claimNo ?? '', tpa: claim?.tpaName ?? '', ...r };
     });
     setSweepLog((prev) => [...logEntries.reverse(), ...prev]);
     setShowModal(false);

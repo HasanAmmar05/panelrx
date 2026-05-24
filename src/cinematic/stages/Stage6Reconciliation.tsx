@@ -36,26 +36,7 @@ const RESULT_ICONS: Record<string, LucideIcon> = {
   AlertCircle,
 };
 
-type SubPhase =
-  | 'pre-pipeline'
-  | 'agent-1'
-  | 'agent-2'
-  | 'agent-3'
-  | 'agent-4'
-  | 'agent-5'
-  | 'money-shot'
-  | 'closing';
 
-function getSubPhase(ms: number): SubPhase {
-  if (ms < 3000) return 'pre-pipeline';
-  if (ms < 4500) return 'agent-1';
-  if (ms < 7500) return 'agent-2';
-  if (ms < 11500) return 'agent-3';
-  if (ms < 13500) return 'agent-4';
-  if (ms < 15000) return 'agent-5';
-  if (ms < 16500) return 'money-shot';
-  return 'closing';
-}
 
 function getAgentStatus(elapsedMs: number, agent: typeof STAGE_CONTENT.stage6.agents[number]) {
   if (elapsedMs < agent.startMs) return 'idle' as const;
@@ -65,7 +46,6 @@ function getAgentStatus(elapsedMs: number, agent: typeof STAGE_CONTENT.stage6.ag
 
 export function Stage6Reconciliation({ elapsedMs }: Stage6ReconciliationProps) {
   const c = STAGE_CONTENT.stage6;
-  const phase = getSubPhase(elapsedMs);
 
   const showBubble = elapsedMs < 1000;
   const showRemittance = elapsedMs >= 1000 && elapsedMs < 2500;

@@ -26,7 +26,6 @@ type ControlBarProps = {
   onPrev: () => void;
   onSkipToEnd: () => void;
   onReplay: () => void;
-  onCycleSpeed: () => void;
   onSetSpeed: (s: number) => void;
   onSeek: (deltaMs: number) => void;
 };
@@ -52,7 +51,6 @@ export function ControlBar({
   onPrev,
   onSkipToEnd,
   onReplay,
-  onCycleSpeed,
   onSetSpeed,
   onSeek,
 }: ControlBarProps) {
@@ -67,8 +65,7 @@ export function ControlBar({
   const btnDisabled =
     'opacity-30 cursor-not-allowed hover:bg-transparent hover:text-ink';
 
-  const speedLabel = speed < 1 ? `${speed}x` : `${speed}x`;
-  const speedColor = speed <= 0.5 ? 'text-amber-400' : speed >= 1.5 ? 'text-emerald-400' : 'text-primary';
+
 
   return (
     <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 max-w-[calc(100vw-1.5rem)]">
